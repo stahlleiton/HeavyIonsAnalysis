@@ -1,2 +1,0 @@
-# HeavyIonsAnalysis
-HeavyIonsAnalysis standalone repository
