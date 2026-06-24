@@ -102,18 +102,8 @@ process.load("HeavyIonsAnalysis.MuonAnalysis.muonAnalyzer_cfi")
 #########################
 # ZDC RecHit Producer && Analyzer
 #########################
-process.load('HeavyIonsAnalysis.ZDCAnalysis.QWZDC2018Producer_cfi')
-process.load('HeavyIonsAnalysis.ZDCAnalysis.QWZDC2018RecHit_cfi')
-process.load('HeavyIonsAnalysis.ZDCAnalysis.zdcanalyzer_cfi')
-process.zdcdigi.SOI = cms.untracked.int32(2)
-process.zdcanalyzer.doZDCRecHit = False
-process.zdcanalyzer.doZDCDigi = True
-process.zdcanalyzer.zdcRecHitSrc = cms.InputTag("QWzdcreco")
-process.zdcanalyzer.zdcDigiSrc = cms.InputTag("hcalDigis", "ZDC")
-process.zdcanalyzer.calZDCDigi = False
-process.zdcanalyzer.verbose = False
-process.zdcanalyzer.nZdcTs = cms.int32(6)
-process.zdcSequencePbPb = cms.Sequence(process.zdcanalyzer)
+process.load('HeavyIonsAnalysis.ZDCAnalysis.ZDCAnalyzersHC2023_cff')
+process.zdcSequencePbPb = process.zdcSequence.copy()
 
 ###############################################################################
 # main forest sequence
@@ -182,6 +172,7 @@ process.load('HeavyIonsAnalysis.EventAnalysis.collisionEventSelection_cff')
 process.pclusterCompatibilityFilter = cms.Path(process.clusterCompatibilityFilter)
 process.pprimaryVertexFilter = cms.Path(process.primaryVertexFilter)
 process.load('HeavyIonsAnalysis.EventAnalysis.hffilter_cfi')
+process.load('HeavyIonsAnalysis.ZDCAnalysis.HiZDCfilter_cfi')
 process.pAna = cms.EndPath(process.skimanalysis)
 
 process.goodMuons = cms.EDFilter("PATMuonSelector",
