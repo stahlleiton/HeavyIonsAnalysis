@@ -1,7 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-empty_branches = cms.vstring([])
-
 dummy_branches_for_PbPb_2023_HLT = cms.vstring([
     'HLT_HIMinimumBiasHF1AND_v3',
     'HLT_HIMinimumBiasHF1ANDZDC1nOR_v1',

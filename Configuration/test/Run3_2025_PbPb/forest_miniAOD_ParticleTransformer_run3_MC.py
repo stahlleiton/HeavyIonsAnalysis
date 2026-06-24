@@ -17,7 +17,7 @@ process.HiForestInfo.info = cms.vstring("HiForest, miniAOD, 151X, mc")
 # input files
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring('/store/mc/HINPbPbWinter25MiniAOD/DYToEE_M-50_TuneCP5_5p36TeV_powheg-pythia8/MINIAODSIM/151X_mcRun3_2025_realistic_HI_v5-v6/2550000/0183783c-7f09-467b-b51e-08ee5980ae15.root'),
+    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/mc/HINPbPbWinter25MiniAOD/DYToEE_M-50_TuneCP5_5p36TeV_powheg-pythia8/MINIAODSIM/151X_mcRun3_2025_realistic_HI_v5-v6/2550000/0183783c-7f09-467b-b51e-08ee5980ae15.root'),
 )
 
 # number of events to process, set to -1 to process all events
@@ -43,6 +43,15 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '151X_mcRun3_2025_realistic_HI_v5', '')
 process.HiForestInfo.GlobalTagLabel = process.GlobalTag.globaltag
+
+# Add JP calibration
+process.GlobalTag.snapshotTime = cms.string("9999-12-31 23:59:59.000")
+process.GlobalTag.toGet.extend([
+    cms.PSet(record = cms.string("BTagTrackProbability3DRcd"),
+        tag = cms.string("JPcalib_MC103X_2018PbPb_v4"),
+        connect = cms.string("frontier://FrontierProd/CMS_CONDITIONS")
+    )
+])
 
 ###############################################################################
 
@@ -90,9 +99,8 @@ process.metFilters = process.skimanalysis.clone(hltresults = "TriggerResults::PA
 
 from HeavyIonsAnalysis.EventAnalysis.hltobject_cfi import trigger_list_data_2025_skimmed
 process.hltobject.triggerNames = trigger_list_data_2025_skimmed
-from HeavyIonsAnalysis.EventAnalysis.dummybranches_cff import *
+from HeavyIonsAnalysis.EventAnalysis.dummybranches_cff import dummy_branches_for_PbPb_2025_HLT
 process.hltanalysis.hltdummybranches = dummy_branches_for_PbPb_2025_HLT
-process.hltanalysis.l1dummybranches = dummy_branches_for_PbPb_2025_L1
 
 process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 ################################
@@ -177,7 +185,7 @@ doWTARecluster = False        # Add jet phi and eta for WTA axis
 for jetR, doFlow in zip([0.3, 0.3, 0.4], [False, True, True]):
     R = str(int(jetR*10))
     from HeavyIonsAnalysis.JetAnalysis.deepNtupleSettings_cff import candidateBtaggingMiniAOD
-    candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = jetPtMin, jetR = jetR, jetCorrLevels = ['L2Relative', 'L3Absolute'], doFlow = doFlow)
+    candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = jetPtMin, jetR = jetR, jetCorrLevels = ['L2Relative', 'L3Absolute'], doFlow = doFlow, addNegTag = True, era = "Run3_2025_PbPb")
 
     # setup jet analyzer
     jL = f"Cs{R}Flow" if doFlow else f"Cs{R}"
@@ -212,20 +220,4 @@ process.load('HeavyIonsAnalysis.EventAnalysis.collisionEventSelection_cff')
 process.pclusterCompatibilityFilter = cms.Path(process.clusterCompatibilityFilter)
 process.pprimaryVertexFilter = cms.Path(process.primaryVertexFilter)
 process.load('HeavyIonsAnalysis.EventAnalysis.hffilter_cfi')
-process.pphfCoincFilter4Th2 = cms.Path(process.phfCoincFilter4Th2)
-process.pphfCoincFilter1Th3 = cms.Path(process.phfCoincFilter1Th3)
-process.pphfCoincFilter2Th3 = cms.Path(process.phfCoincFilter2Th3)
-process.pphfCoincFilter3Th3 = cms.Path(process.phfCoincFilter3Th3)
-process.pphfCoincFilter4Th3 = cms.Path(process.phfCoincFilter4Th3)
-process.pphfCoincFilter5Th3 = cms.Path(process.phfCoincFilter5Th3)
-process.pphfCoincFilter1Th4 = cms.Path(process.phfCoincFilter1Th4)
-process.pphfCoincFilter2Th4 = cms.Path(process.phfCoincFilter2Th4)
-process.pphfCoincFilter3Th4 = cms.Path(process.phfCoincFilter3Th4)
-process.pphfCoincFilter4Th4 = cms.Path(process.phfCoincFilter4Th4)
-process.pphfCoincFilter5Th4 = cms.Path(process.phfCoincFilter5Th4)
-process.pphfCoincFilter1Th5 = cms.Path(process.phfCoincFilter1Th5)
-process.pphfCoincFilter2Th5 = cms.Path(process.phfCoincFilter2Th5)
-process.pphfCoincFilter3Th5 = cms.Path(process.phfCoincFilter3Th5)
-process.pphfCoincFilter4Th5 = cms.Path(process.phfCoincFilter4Th5)
-process.pphfCoincFilter5Th5 = cms.Path(process.phfCoincFilter5Th5)
 process.pAna = cms.EndPath(process.skimanalysis)

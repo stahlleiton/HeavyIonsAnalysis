@@ -1,9 +1,11 @@
 import FWCore.ParameterSet.Config as cms
 
-def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, jetCorrLevels = ['L2Relative', 'L3Absolute'], doFlow = False):
+def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, jetCorrLevels = ['L2Relative', 'L3Absolute'], doFlow = False, addNegTag = True, era = ''):
     # DeepNtuple settings
     R = str(int(jetR*10))
     jetCorrectionsAK = ('AK4PF', jetCorrLevels, 'None')
+    if era not in ['Run3_2023_PbPb','Run3_2024_PbPb','Run3_2025_PbPb','Run3_2026_PbPb']:
+        raise Exception(f"Era {era} is not supported by candidateBtaggingMiniAOD!")
 
     bTagInfos = [
         'pfDeepCSVTagInfos',
@@ -16,7 +18,6 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
-        'pfNegativeOnlyJetProbabilityBJetTags',
         'pfDeepCSVJetTags:probb',
         'pfDeepCSVJetTags:probbb',
         'pfDeepCSVJetTags:probc',
@@ -36,7 +37,10 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
     ]
     from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4JetTags_cfi import pfUnifiedParticleTransformerAK4JetTags as _UParTJetTags
     bTagDiscriminators += ['pfUnifiedParticleTransformerAK4JetTags:' + f for f in _UParTJetTags.flav_names]
-    bTagDiscriminators += ['pfNegativeUnifiedParticleTransformerAK4JetTags:' + f for f in _UParTJetTags.flav_names]
+    if addNegTag:
+        bTagDiscriminators += ['pfNegativeOnlyJetProbabilityBJetTags']
+    if addNegTag and era in ['Run3_2025_PbPb','Run3_2026_PbPb']:
+        bTagDiscriminators += ['pfNegativeUnifiedParticleTransformerAK4JetTags:' + f for f in _UParTJetTags.flav_names]
 
     # Create gen-level information
     if isMC:
@@ -59,19 +63,62 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
         ))
         setattr(process,f'genAK{R}Task', cms.Task(process.hiSignalGenParticles, process.allPartons, process.packedGenParticlesForJetsNoNu, getattr(process,f'ak{R}GenJetsRecluster')))
 
+    # Set secondary vertices
+    svSource = "slimmedSecondaryVertices"
+    process.svTask = cms.Task()
+
+    # Remake secondary vertices
+    if era in ['Run3_2023_PbPb','Run3_2024_PbPb']:
+        from RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff import inclusiveCandidateVertexFinder, candidateVertexMerger, candidateVertexArbitrator, inclusiveCandidateSecondaryVertices
+        process.inclusiveCandidateVertexFinder = inclusiveCandidateVertexFinder.clone(
+            tracks = "packedPFCandidates",
+            primaryVertices = "offlineSlimmedPrimaryVertices",
+            minHits = 10,
+            minPt = 1.0
+        )
+        process.candidateVertexMerger = candidateVertexMerger.clone()
+        process.candidateVertexArbitrator = candidateVertexArbitrator.clone(
+            tracks = "packedPFCandidates",
+            primaryVertices = "offlineSlimmedPrimaryVertices"
+        )
+        process.inclusiveCandidateSecondaryVertices = inclusiveCandidateSecondaryVertices.clone()
+        for mod in ["inclusiveCandidateVertexFinder","candidateVertexMerger","candidateVertexArbitrator","inclusiveCandidateSecondaryVertices"]:
+            process.svTask.add(getattr(process, mod))
+        svSource = "inclusiveCandidateSecondaryVertices"
+
     # Add negative secondary vertices
-    from RecoVertex.AdaptiveVertexFinder.inclusiveNegativeVertexing_cff import inclusiveCandidateNegativeVertexFinder, candidateNegativeVertexMerger, candidateNegativeVertexArbitrator, inclusiveCandidateNegativeSecondaryVertices
-    process.inclusiveCandidateNegativeVertexFinder = inclusiveCandidateNegativeVertexFinder.clone(
-        tracks = "packedPFCandidates",
-        primaryVertices = "offlineSlimmedPrimaryVertices",
-    )
-    process.candidateNegativeVertexMerger = candidateNegativeVertexMerger.clone()
-    process.candidateNegativeVertexArbitrator = candidateNegativeVertexArbitrator.clone(
-        tracks = "packedPFCandidates",
-        primaryVertices = "offlineSlimmedPrimaryVertices"
-    )
-    process.inclusiveCandidateNegativeSecondaryVertices = inclusiveCandidateNegativeSecondaryVertices.clone()
-    process.svTask = cms.Task(process.inclusiveCandidateNegativeVertexFinder, process.candidateNegativeVertexMerger, process.candidateNegativeVertexArbitrator, process.inclusiveCandidateNegativeSecondaryVertices)
+    if addNegTag and era in ['Run3_2023_PbPb','Run3_2024_PbPb']:
+        process.inclusiveCandidateNegativeVertexFinder = process.inclusiveCandidateVertexFinder.clone(
+            vertexMinAngleCosine = -0.95,
+            clusterizer = dict( clusterMinAngleCosine = -0.5 )
+        )
+        process.candidateNegativeVertexMerger = process.candidateVertexMerger.clone(
+            secondaryVertices = "inclusiveCandidateNegativeVertexFinder"
+        )
+        process.candidateNegativeVertexArbitrator = process.candidateVertexArbitrator.clone(
+            secondaryVertices = "candidateNegativeVertexMerger",
+            dRCut = -0.4
+        )
+        process.inclusiveCandidateNegativeSecondaryVertices = process.candidateVertexMerger.clone(
+            secondaryVertices = "candidateNegativeVertexArbitrator",
+            maxFraction = 0.2,
+            minSignificance = 10.
+        )
+    elif addNegTag:
+        from RecoVertex.AdaptiveVertexFinder.inclusiveNegativeVertexing_cff import inclusiveCandidateNegativeVertexFinder, candidateNegativeVertexMerger, candidateNegativeVertexArbitrator, inclusiveCandidateNegativeSecondaryVertices
+        process.inclusiveCandidateNegativeVertexFinder = inclusiveCandidateNegativeVertexFinder.clone(
+            tracks = "packedPFCandidates",
+            primaryVertices = "offlineSlimmedPrimaryVertices",
+        )
+        process.candidateNegativeVertexMerger = candidateNegativeVertexMerger.clone()
+        process.candidateNegativeVertexArbitrator = candidateNegativeVertexArbitrator.clone(
+            tracks = "packedPFCandidates",
+            primaryVertices = "offlineSlimmedPrimaryVertices"
+        )
+        process.inclusiveCandidateNegativeSecondaryVertices = inclusiveCandidateNegativeSecondaryVertices.clone()
+    if addNegTag:
+        for mod in ["inclusiveCandidateNegativeVertexFinder","candidateNegativeVertexMerger","candidateNegativeVertexArbitrator","inclusiveCandidateNegativeSecondaryVertices"]:
+            process.svTask.add(getattr(process, mod))
 
     # Create unsubtracted reco jets
     from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
@@ -84,7 +131,7 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
         rParam             = jetR,
         pvSource           = cms.InputTag("offlineSlimmedPrimaryVertices"),
         pfCandidates       = cms.InputTag("packedPFCandidates"),
-        svSource           = cms.InputTag('slimmedSecondaryVertices'),
+        svSource           = cms.InputTag(svSource),
         muSource           = cms.InputTag("slimmedMuons"),
         elSource           = cms.InputTag("slimmedElectrons"),
         getJetMCFlavour    = isMC,
@@ -115,7 +162,7 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
         rParam             = jetR,
         pvSource           = cms.InputTag("offlineSlimmedPrimaryVertices"),
         pfCandidates       = cms.InputTag("packedPFCandidates"),
-        svSource           = cms.InputTag('slimmedSecondaryVertices'),
+        svSource           = cms.InputTag(svSource),
         muSource           = cms.InputTag("slimmedMuons"),
         elSource           = cms.InputTag("slimmedElectrons"),
         getJetMCFlavour    = isMC,
@@ -196,7 +243,7 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
         jetCorrections = jetCorrectionsAK,
         pfCandidates = cms.InputTag('packedPFCandidates'),
         pvSource = cms.InputTag("offlineSlimmedPrimaryVertices"),
-        svSource = cms.InputTag('slimmedSecondaryVertices'),
+        svSource = cms.InputTag(svSource),
         muSource = cms.InputTag('slimmedMuons'),
         elSource = cms.InputTag('slimmedElectrons'),
         btagInfos = bTagInfos,
@@ -210,14 +257,24 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
     ))
     process.patAlgosToolsTask.add(getattr(process,f'unsubUpdatedPatJetsAK{jL}DeepFlavour'))
 
-    for mod in [f'pfUnifiedParticleTransformerAK4', f'pfNegativeUnifiedParticleTransformerAK4']:
-        getattr(process, f'{mod}JetTagsAK{jL}DeepFlavour').model_path = 'HeavyIonsAnalysis/Configuration/data/'+(f'PbPb_AK3_2024_v6.onnx' if jetR==0.3 else f'UParTAK{R}_PbPb_2024.onnx')
+    for mod in [f'pfUnifiedParticleTransformerAK4']:
+        if era == "Run3_2023_PbPb" and jetR==0.4:
+            model = 'RecoBTag/Combined/data/UParTAK4/HIN/V00/UParTAK4_PbPb_2023.onnx'
+        elif era == "Run3_2023_PbPb":
+            model = f'HeavyIonsAnalysis/Configuration/data/UParTAK{R}_PbPb_2023.onnx'
+        elif era in ["Run3_2024_PbPb","Run3_2025_PbPb","Run3_2026_PbPb"]:
+            model = f'HeavyIonsAnalysis/Configuration/data/UParTAK{R}_PbPb_2024.onnx'
+        else:
+            raise Exception(f"UParT model not defined for {era}!")
+        getattr(process,f'pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour').model_path = model
         getattr(process, f'{mod}TagInfosAK{jL}DeepFlavour').sort_cand_by_pt = True
-        getattr(process, f'{mod}TagInfosAK{jL}DeepFlavour').fix_lt_sorting = True
-        getattr(process, f'{mod}TagInfosAK{jL}DeepFlavour').secondary_vertices = 'inclusiveCandidateNegativeSecondaryVertices' if 'Negative' in mod else 'slimmedSecondaryVertices'
+        if era != "Run3_2023_PbPb":
+            getattr(process, f'{mod}TagInfosAK{jL}DeepFlavour').fix_lt_sorting = True
+        getattr(process, f'{mod}TagInfosAK{jL}DeepFlavour').secondary_vertices = 'inclusiveCandidateNegativeSecondaryVertices' if 'Negative' in mod else svSource
 
     getattr(process,f'pfImpactParameterTagInfosAK{jL}DeepFlavour').maxDeltaR = jetR
-    for taginfo in [f"pfDeepFlavourTagInfosAK{jL}DeepFlavour", f"pfParticleTransformerAK4TagInfosAK{jL}DeepFlavour", f"pfUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour", f"pfNegativeUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour"]:
+    taginfos = [f"pfDeepFlavourTagInfosAK{jL}DeepFlavour", f"pfParticleTransformerAK4TagInfosAK{jL}DeepFlavour", f"pfUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour"]
+    for taginfo in taginfos:
         getattr(process, taginfo).jet_radius = jetR
 
     if hasattr(process,f'updatedPatJetsTransientCorrectedAK{jL}DeepFlavour'):
@@ -230,7 +287,7 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
     process.patAlgosToolsTask.remove(process.packedpuppi)
     process.patAlgosToolsTask.remove(process.packedpuppiNoLep)
     getattr(process,f'pfInclusiveSecondaryVertexFinderTagInfosAK{jL}DeepFlavour').weights = ""
-    for taginfo in [f"pfDeepFlavourTagInfosAK{jL}DeepFlavour", f"pfParticleTransformerAK4TagInfosAK{jL}DeepFlavour", f"pfUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour", f"pfNegativeUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour"]:
+    for taginfo in taginfos:
         getattr(process, taginfo).fallback_puppi_weight = True
         getattr(process, taginfo).fallback_vertex_association = True
         getattr(process, taginfo).unsubjet_map = f"unsubUpdatedPatJetsAK{jL}DeepFlavour"
@@ -246,6 +303,18 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
     from RecoBTag.ImpactParameter.pfJetProbabilityBJetTags_cfi import pfJetProbabilityBJetTags
     setattr(process,f'pfJetProbabilityBJetTagsAK{jL}DeepFlavour', pfJetProbabilityBJetTags.clone(tagInfos = [f"pfImpactParameterTagInfosAK{jL}DeepFlavour"]))
     process.patAlgosToolsTask.add(getattr(process,f'pfJetProbabilityBJetTagsAK{jL}DeepFlavour'))
+
+    #Add negative taggers
+    if addNegTag:
+        setattr(process,f'pfNegativeUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour', getattr(process,f'pfUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour').clone(
+            flip = True,
+            secondary_vertices = 'inclusiveCandidateNegativeSecondaryVertices',
+        ))
+        setattr(process,f'pfNegativeUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour', getattr(process,f'pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour').clone(
+            src = f'pfNegativeUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour',
+        ))
+        process.patAlgosToolsTask.add(getattr(process,f'pfNegativeUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour'))
+        process.patAlgosToolsTask.add(getattr(process,f'pfNegativeUnifiedParticleTransformerAK4TagInfosAK{jL}DeepFlavour'))
 
     # Associate to forest sequence
     if isMC:
