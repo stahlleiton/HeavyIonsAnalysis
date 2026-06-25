@@ -76,6 +76,9 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
             minHits = 10,
             minPt = 1.0
         )
+        if era == "Run3_2023_PbPb":
+            process.inclusiveCandidateVertexFinder.minHits = 0
+            process.inclusiveCandidateVertexFinder.minPt = 0.8
         process.candidateVertexMerger = candidateVertexMerger.clone()
         process.candidateVertexArbitrator = candidateVertexArbitrator.clone(
             tracks = "packedPFCandidates",
