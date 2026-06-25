@@ -93,12 +93,11 @@ private:
 //
 // constructors and destructor
 //
-HICentralityBinProducer::HICentralityBinProducer(const edm::ParameterSet& iConfig) :
-  token_(consumes<reco::Centrality>(iConfig.getParameter<edm::InputTag>("Centrality"))),
-  table_(iConfig.getParameter<std::vector<double>>("table")),
-  centralityVariable_(iConfig.getParameter<std::string>("centralityVariable")),
-  varType_(Missing) {
-
+HICentralityBinProducer::HICentralityBinProducer(const edm::ParameterSet& iConfig)
+    : token_(consumes<reco::Centrality>(iConfig.getParameter<edm::InputTag>("Centrality"))),
+      table_(iConfig.getParameter<std::vector<double>>("table")),
+      centralityVariable_(iConfig.getParameter<std::string>("centralityVariable")),
+      varType_(Missing) {
   if (centralityVariable_ == "HFtowers")
     varType_ = HFtowers;
   if (centralityVariable_ == "HFtowersPlus")
@@ -217,8 +216,8 @@ void HICentralityBinProducer::produce(edm::Event& iEvent, const edm::EventSetup&
 
   int bin(-1);
   assert(table_.size() == 201);
-  for(size_t i = 0; i < 200; i++)
-    if(value >= table_[199 - i]) {
+  for (size_t i = 0; i < 200; i++)
+    if (value >= table_[199 - i]) {
       bin = i;
       break;
     }

@@ -90,7 +90,13 @@ HiInclusiveJetAnalyzer::HiInclusiveJetAnalyzer(const edm::ParameterSet& iConfig)
         consumes<reco::GenParticleCollection>(iConfig.getUntrackedParameter<edm::InputTag>("genParticles"));
 
   if (doBtagging_) {
-    for (const std::string label : {"pfJetProbabilityBJetTag", "pfNegativeOnlyJetProbabilityBJetTag", "pfDeepCSVJetTags", "pfDeepFlavourJetTags", "pfParticleTransformerAK4JetTags", "pfUnifiedParticleTransformerAK4JetTags", "pfNegativeUnifiedParticleTransformerAK4JetTags"}) {
+    for (const std::string label : {"pfJetProbabilityBJetTag",
+                                    "pfNegativeOnlyJetProbabilityBJetTag",
+                                    "pfDeepCSVJetTags",
+                                    "pfDeepFlavourJetTags",
+                                    "pfParticleTransformerAK4JetTags",
+                                    "pfUnifiedParticleTransformerAK4JetTags",
+                                    "pfNegativeUnifiedParticleTransformerAK4JetTags"}) {
       const auto& tag = iConfig.getUntrackedParameter<string>(label, "");
       if (tag.empty())
         continue;
@@ -100,22 +106,40 @@ HiInclusiveJetAnalyzer::HiInclusiveJetAnalyzer(const edm::ParameterSet& iConfig)
         jetTaggers_["pfNegJP"].emplace("probb", consumes<JetTagCollection>(tag));
       else if (label == "pfDeepCSVJetTags")
         for (const auto& cat : {"probb", "probbb"})
-          jetTaggers_["deepCSV"].emplace(cat, consumes<JetTagCollection>(tag+":"+cat));
+          jetTaggers_["deepCSV"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
       else if (label == "pfDeepFlavourJetTags")
         for (const auto& cat : {"probb", "probbb", "problepb"})
-          jetTaggers_["deepFlavour"].emplace(cat, consumes<JetTagCollection>(tag+":"+cat));
+          jetTaggers_["deepFlavour"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
       else if (label == "pfParticleTransformerAK4JetTags")
         for (const auto& cat : {"probb", "probbb", "problepb"})
-          jetTaggers_["particleTransformer"].emplace(cat, consumes<JetTagCollection>(tag+":"+cat));
+          jetTaggers_["particleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
       else if (label == "pfUnifiedParticleTransformerAK4JetTags")
-        for (const auto& cat : {"probb", "probbb", "problepb", "probc", "probg", "probu", "probd", "probs",
-                                "probtaup1h0p", "probtaup1h1p", "probtaup1h2p", "probtaup3h0p", "probtaup3h1p", "probtaum1h0p", "probtaum1h1p", "probtaum1h2p", "probtaum3h0p", "probtaum3h1p",
-                                "probele", "probmu", "ptcorr", "ptnu", "ptreshigh", "ptreslow"})
-          jetTaggers_["unifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag+":"+cat));
+        for (const auto& cat :
+             {"probb",        "probbb",       "problepb",     "probc",        "probg",        "probu",
+              "probd",        "probs",        "probtaup1h0p", "probtaup1h1p", "probtaup1h2p", "probtaup3h0p",
+              "probtaup3h1p", "probtaum1h0p", "probtaum1h1p", "probtaum1h2p", "probtaum3h0p", "probtaum3h1p",
+              "probele",      "probmu",       "ptcorr",       "ptnu",         "ptreshigh",    "ptreslow"})
+          jetTaggers_["unifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
       else if (label == "pfNegativeUnifiedParticleTransformerAK4JetTags")
-        for (const auto& cat : {"probb", "probbb", "problepb", "probc", "probg", "probu", "probd", "probs",
-                                "probtaup1h0p", "probtaup1h1p", "probtaup1h2p", "probtaup3h0p", "probtaup3h1p", "probtaum1h0p", "probtaum1h1p", "probtaum1h2p", "probtaum3h0p", "probtaum3h1p"})
-          jetTaggers_["negUnifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag+":"+cat));
+        for (const auto& cat : {"probb",
+                                "probbb",
+                                "problepb",
+                                "probc",
+                                "probg",
+                                "probu",
+                                "probd",
+                                "probs",
+                                "probtaup1h0p",
+                                "probtaup1h1p",
+                                "probtaup1h2p",
+                                "probtaup3h0p",
+                                "probtaup3h1p",
+                                "probtaum1h0p",
+                                "probtaum1h1p",
+                                "probtaum1h2p",
+                                "probtaum3h0p",
+                                "probtaum3h1p"})
+          jetTaggers_["negUnifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
     }
   }
   doSubEvent_ = false;
@@ -149,7 +173,7 @@ void HiInclusiveJetAnalyzer::beginJob() {
   t->Branch("jtm", jets_.jtm, "jtm[nref]/F");
   t->Branch("jtarea", jets_.jtarea, "jtarea[nref]/F");
 
-  if(doCaloJets_){
+  if (doCaloJets_) {
     t->Branch("ncalo", &jets_.ncalo, "ncalo/I");
     t->Branch("calopt", jets_.calopt, "calopt[ncalo]/F");
     t->Branch("caloeta", jets_.caloeta, "caloeta[ncalo]/F");
@@ -280,12 +304,16 @@ void HiInclusiveJetAnalyzer::beginJob() {
   if (doBtagging_) {
     for (const auto& tg : jetTaggers_) {
       auto& discr = jets_discr_[tg.first];
-      t->Branch(("discr_"+tg.first).c_str(), discr["b"].data(), ("discr_"+tg.first+"[nref]/F").c_str());
+      t->Branch(("discr_" + tg.first).c_str(), discr["b"].data(), ("discr_" + tg.first + "[nref]/F").c_str());
       if (tg.first == "unifiedParticleTransformer" || tg.first == "negUnifiedParticleTransformer") {
-        t->Branch(("discr_"+tg.first+"_probtau").c_str(), discr["probtau"].data(), ("discr_"+tg.first+"_probtau[nref]/F").c_str());
+        t->Branch(("discr_" + tg.first + "_probtau").c_str(),
+                  discr["probtau"].data(),
+                  ("discr_" + tg.first + "_probtau[nref]/F").c_str());
         for (const auto& c : tg.second)
-          if (c.first.rfind("probtau",0)!=0)
-            t->Branch(("discr_"+tg.first+"_"+c.first).c_str(), discr[c.first].data(), ("discr_"+tg.first+"_"+c.first+"[nref]/F").c_str());
+          if (c.first.rfind("probtau", 0) != 0)
+            t->Branch(("discr_" + tg.first + "_" + c.first).c_str(),
+                      discr[c.first].data(),
+                      ("discr_" + tg.first + "_" + c.first + "[nref]/F").c_str());
       }
     }
   }
@@ -436,7 +464,8 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
   iEvent.getByToken(jetTag_, jets);
 
   edm::Handle<reco::CaloJetCollection> calojets;
-  if(doCaloJets_)iEvent.getByToken(caloJetTag_, calojets);
+  if (doCaloJets_)
+    iEvent.getByToken(caloJetTag_, calojets);
 
   edm::Handle<pat::JetCollection> matchedjets;
   iEvent.getByToken(matchTag_, matchedjets);
@@ -505,15 +534,17 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
     jets_.genSDConstituentsM.clear();
   }
 
-  auto getTag = [&](const edm::Handle<reco::JetTagCollection> &bTags,const pat::Jet &jet) {
+  auto getTag = [&](const edm::Handle<reco::JetTagCollection>& bTags, const pat::Jet& jet) {
     float tagValue(-999), maxDR2(r2Param);
-    for (const auto &t : *bTags) {
+    for (const auto& t : *bTags) {
       auto const dR2 = deltaR2(jet, *(t.first));
-      if (dR2 > maxDR2) continue;
-      maxDR2=dR2;
-      tagValue=t.second;
+      if (dR2 > maxDR2)
+        continue;
+      maxDR2 = dR2;
+      tagValue = t.second;
     }
-    if(std::isnan(tagValue)) tagValue=-999;
+    if (std::isnan(tagValue))
+      tagValue = -999;
     return tagValue;
   };
 
@@ -530,19 +561,30 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
       for (const auto& t : jetTaggers) {
         auto& discr = jets_discr_.at(t.first);
         if (t.first == "pfJP" || t.first == "pfNegJP")
-          discr["b"][jets_.nref] = getTag(t.second.at("probb"),jet);
+          discr["b"][jets_.nref] = getTag(t.second.at("probb"), jet);
         else if (t.first == "deepCSV")
-          discr["b"][jets_.nref]  = getTag(t.second.at("probb"),jet)+getTag(t.second.at("probbb"),jet);
-        else if (t.first == "deepFlavour" || t.first == "particleTransformer" || t.first == "unifiedParticleTransformer" || t.first == "negUnifiedParticleTransformer")
-          discr["b"][jets_.nref] = getTag(t.second.at("probb"),jet)+getTag(t.second.at("probbb"),jet)+getTag(t.second.at("problepb"),jet);
+          discr["b"][jets_.nref] = getTag(t.second.at("probb"), jet) + getTag(t.second.at("probbb"), jet);
+        else if (t.first == "deepFlavour" || t.first == "particleTransformer" ||
+                 t.first == "unifiedParticleTransformer" || t.first == "negUnifiedParticleTransformer")
+          discr["b"][jets_.nref] = getTag(t.second.at("probb"), jet) + getTag(t.second.at("probbb"), jet) +
+                                   getTag(t.second.at("problepb"), jet);
         if (t.first == "unifiedParticleTransformer" || t.first == "negUnifiedParticleTransformer") {
           float tag(0.0);
-          for (const auto& n : {"probtaup1h0p", "probtaup1h1p", "probtaup1h2p", "probtaup3h0p", "probtaup3h1p", "probtaum1h0p", "probtaum1h1p", "probtaum1h2p", "probtaum3h0p", "probtaum3h1p"})
+          for (const auto& n : {"probtaup1h0p",
+                                "probtaup1h1p",
+                                "probtaup1h2p",
+                                "probtaup3h0p",
+                                "probtaup3h1p",
+                                "probtaum1h0p",
+                                "probtaum1h1p",
+                                "probtaum1h2p",
+                                "probtaum3h0p",
+                                "probtaum3h1p"})
             tag += getTag(t.second.at(n), jet);
           discr["probtau"][jets_.nref] = tag;
           for (const auto& c : t.second)
-            if (c.first.rfind("probtau",0)!=0)
-              discr[c.first][jets_.nref] = getTag(c.second,jet);
+            if (c.first.rfind("probtau", 0) != 0)
+              discr[c.first][jets_.nref] = getTag(c.second, jet);
         }
       }
     }
@@ -715,7 +757,8 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
       std::vector<fastjet::PseudoJet> candidates;
       auto daughters = jet.getJetConstituents();
       for (auto it = daughters.begin(); it != daughters.end(); ++it) {
-        if (!it->isAvailable()) continue;
+        if (!it->isAvailable())
+          continue;
         candidates.push_back(fastjet::PseudoJet((**it).px(), (**it).py(), (**it).pz(), (**it).energy()));
       }
       auto cs = new fastjet::ClusterSequence(candidates, WTAjtDef);
@@ -860,7 +903,7 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
         jets_.refparton_flavorForB[jets_.nref] = 0;
 
       const auto& genParton = (jet.genParticleRef(0).isAvailable() && jet.genParton() ? jet : unsubjet).genParton();
-      if(genParton){
+      if (genParton) {
         // matched partons
         const auto& parton = *genParton;
         jets_.refparton_pt[jets_.nref] = parton.pt();
@@ -868,11 +911,11 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
 
         const auto& momRef = findGenMother(parton);
         const auto momPdgId = momRef.isNonnull() ? std::abs(momRef->pdgId()) : 1E7;
-        jets_.refparton_momKey[jets_.nref] = momPdgId < 1E5 ? (momPdgId + momRef.key()*1E5) : -1;
+        jets_.refparton_momKey[jets_.nref] = momPdgId < 1E5 ? (momPdgId + momRef.key() * 1E5) : -1;
 
         const auto& gMomRef = findGenMother(momRef);
         const auto gMomPdgId = gMomRef.isNonnull() ? std::abs(gMomRef->pdgId()) : 1E7;
-        jets_.refparton_gMomKey[jets_.nref] = gMomPdgId < 1E5 ? (gMomPdgId + gMomRef.key()*1E5) : -1;
+        jets_.refparton_gMomKey[jets_.nref] = gMomPdgId < 1E5 ? (gMomPdgId + gMomRef.key() * 1E5) : -1;
       } else {
         jets_.refparton_pt[jets_.nref] = -999;
         jets_.refparton_flavor[jets_.nref] = -999;
@@ -950,8 +993,7 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
           if (genjet_pt > genPtMin_) {
             jets_.genmatchindex[jets_.ngen] = (int)ijet;
             jets_.gendphijt[jets_.ngen] = reco::deltaPhi(jets_.refphi[ijet], genjet.phi());
-            jets_.gendrjt[jets_.ngen] =
-                sqrt(pow(jets_.gendphijt[jets_.ngen], 2) + pow(deltaEta, 2));
+            jets_.gendrjt[jets_.ngen] = sqrt(pow(jets_.gendphijt[jets_.ngen], 2) + pow(deltaEta, 2));
           }
           if (doGenTaus_) {
             jets_.reftau1[ijet] = tau1;
@@ -968,7 +1010,8 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
           std::vector<fastjet::PseudoJet> candidates;
           auto daughters = genjet.getJetConstituents();
           for (auto it = daughters.begin(); it != daughters.end(); ++it) {
-            if (!it->isAvailable()) continue;
+            if (!it->isAvailable())
+              continue;
             candidates.push_back(fastjet::PseudoJet((**it).px(), (**it).py(), (**it).pz(), (**it).energy()));
           }
           auto cs = new fastjet::ClusterSequence(candidates, WTAjtDef);
@@ -1006,8 +1049,8 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
       }
     }
   }
-  
-  if(doCaloJets_){
+
+  if (doCaloJets_) {
     for (unsigned int j = 0; j < calojets->size(); ++j) {
       const reco::Jet& jet = (*calojets)[j];
       jets_.calopt[jets_.ncalo] = jet.pt();
@@ -1034,7 +1077,7 @@ int HiInclusiveJetAnalyzer::getPFJetMuon(const pat::Jet& pfJet,
     if (abs(id) != 3)
       continue;
 
-    if (reco::deltaR2(pfJet, pfCandidate) > 0.25) // 0.25 = 0.5^2
+    if (reco::deltaR2(pfJet, pfCandidate) > 0.25)  // 0.25 = 0.5^2
       continue;
 
     double pt = pfCandidate.pt();
@@ -1132,7 +1175,7 @@ void HiInclusiveJetAnalyzer::analyzeRefSubjets(const reco::GenJet& jet) {
   std::vector<float> sjeta;
   std::vector<float> sjphi;
   std::vector<float> sjm;
-  if (imatch > -1 && dr2 < 0.16) { // 0.16 = 0.4^2
+  if (imatch > -1 && dr2 < 0.16) {  // 0.16 = 0.4^2
     const reco::Jet& mjet = (*gensubjets_)[imatch];
     jets_.refptG[jets_.nref] = mjet.pt();
     jets_.refetaG[jets_.nref] = mjet.eta();
@@ -1195,7 +1238,7 @@ void HiInclusiveJetAnalyzer::analyzeGenSubjets(const reco::GenJet& jet) {
   std::vector<float> sjphi;
   std::vector<float> sjm;
   std::vector<float> sjarea;
-  if (imatch > -1 && dr2 < 0.16) { // 0.16 = 0.4^2
+  if (imatch > -1 && dr2 < 0.16) {  // 0.16 = 0.4^2
     const reco::Jet& mjet = (*gensubjets_)[imatch];
     jets_.genptG[jets_.ngen] = mjet.pt();
     jets_.genetaG[jets_.ngen] = mjet.eta();

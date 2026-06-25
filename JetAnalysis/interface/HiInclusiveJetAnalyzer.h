@@ -62,13 +62,13 @@ private:
   void analyzeRefSubjets(const reco::GenJet& jet);
   void analyzeGenSubjets(const reco::GenJet& jet);
 
-  int TaggedJet(pat::Jet patjet, edm::Handle<reco::JetTagCollection > jetTags );
+  int TaggedJet(pat::Jet patjet, edm::Handle<reco::JetTagCollection> jetTags);
 
-  reco::GenParticleRef findGenMother(const reco::GenParticleRef& par, const int& pId=0) {
-    if (par.isNull() || (pId==0 && par->numberOfMothers() == 0))
+  reco::GenParticleRef findGenMother(const reco::GenParticleRef& par, const int& pId = 0) {
+    if (par.isNull() || (pId == 0 && par->numberOfMothers() == 0))
       return reco::GenParticleRef();
-    auto mom = pId==0 ? par->motherRef(0) : par;
-    const auto& pdgId = pId==0 ? par->pdgId() : pId;
+    auto mom = pId == 0 ? par->motherRef(0) : par;
+    const auto& pdgId = pId == 0 ? par->pdgId() : pId;
     while (mom->numberOfMothers() > 0 && mom->pdgId() == pdgId)
       mom = mom->motherRef(0);
     if (mom->pdgId() == pdgId)
@@ -76,21 +76,20 @@ private:
     return mom;
   };
   reco::GenParticleRef findGenMother(const reco::GenParticle& p) {
-    return p.numberOfMothers()>0 ? findGenMother(p.motherRef(0), p.pdgId()) : reco::GenParticleRef();
+    return p.numberOfMothers() > 0 ? findGenMother(p.motherRef(0), p.pdgId()) : reco::GenParticleRef();
   }
 
   edm::InputTag jetTagLabel_;
   edm::EDGetTokenT<edm::View<pat::Jet>> jetTag_;
   edm::EDGetTokenT<reco::CaloJetCollection> caloJetTag_;
   edm::EDGetTokenT<pat::JetCollection> matchTag_;
-  typedef edm::AssociationMap<edm::OneToOne<reco::JetView, reco::JetView> > JetMatchMap;
+  typedef edm::AssociationMap<edm::OneToOne<reco::JetView, reco::JetView>> JetMatchMap;
   edm::EDGetTokenT<JetMatchMap> unsubjetMapToken_;
   edm::EDGetTokenT<edm::View<pat::PackedCandidate>> pfCandidateLabel_;
   edm::EDGetTokenT<reco::GenParticleCollection> genParticleSrc_;
   edm::EDGetTokenT<edm::View<reco::GenJet>> genjetTag_;
   edm::EDGetTokenT<edm::HepMCProduct> eventInfoTag_;
   edm::EDGetTokenT<GenEventInfoProduct> eventGenInfoTag_;
-
 
   std::string jetName_;  //used as prefix for jet structures
   edm::EDGetTokenT<edm::View<reco::Jet>> subjetGenTag_;
@@ -391,8 +390,6 @@ private:
     float calopt[MAXCALO] = {0};
     float caloeta[MAXCALO] = {0};
     float calophi[MAXCALO] = {0};
-
-
   };
 
   JRA jets_;

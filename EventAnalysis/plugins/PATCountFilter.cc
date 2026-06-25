@@ -50,7 +50,8 @@ PATCountFilter::PATCountFilter(const edm::ParameterSet& iConfig)
       tauToken_(mayConsume<edm::View<Tau> >(iConfig.getParameter<edm::InputTag>("tauSource"))),
       photonToken_(mayConsume<edm::View<Photon> >(iConfig.getUntrackedParameter<edm::InputTag>("photonSource", {}))),
       jetToken_(mayConsume<edm::View<reco::Jet> >(iConfig.getUntrackedParameter<edm::InputTag>("jetSource", {}))),
-      jetTagToken_(mayConsume<reco::JetTagCollection>(iConfig.getUntrackedParameter<edm::InputTag>("jetTagSource", {}))),
+      jetTagToken_(
+          mayConsume<reco::JetTagCollection>(iConfig.getUntrackedParameter<edm::InputTag>("jetTagSource", {}))),
       jetMinPt_(iConfig.getUntrackedParameter<double>("jetMinPt", 0.)),
       countElectrons_(iConfig.getParameter<bool>("countElectrons")),
       countMuons_(iConfig.getParameter<bool>("countMuons")),
