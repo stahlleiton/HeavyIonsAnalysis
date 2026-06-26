@@ -5,17 +5,18 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2026_05_26'
+date = '2026_06_26'
 config.General.workArea = 'crab_projects/'+date+'/MC'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MC.py'
-config.JobType.numCores = 1
+config.JobType.inputFiles = ['../phoEleReg_Run3_2025_PbPb.db']
 config.section_('Data')
 config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/hintt/Run3_2025_PbPb/HiForest/'+date+'/MC'
 config.Data.publication = False
+config.Data.inputDBS = 'global'
 config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
 config.Data.ignoreLocality = True
@@ -64,7 +65,6 @@ dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_EMEnriched_pThat-20_T
 for key, val in dataMap.items():
     config.General.requestName = f'HiForest_{key}_5p36TeV_TuneCP5_2025Run3_'+date
     config.Data.inputDataset = val["PD"]
-    config.Data.inputDBS = 'global' if ("HINPbPbWinter25MiniAOD" in val["PD"]) else 'phys03'
     config.Data.unitsPerJob = val["Units"]
     config.Data.splitting = val['Split'] if "Split" in val else 'LumiBased'
     config.JobType.maxMemoryMB = val["Memory"]

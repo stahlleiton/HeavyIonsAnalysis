@@ -5,22 +5,22 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2025_10_22'
+date = '2026_06_26'
 config.General.workArea = 'crab_projects/'+date+'/MC'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MC.py'
-config.JobType.numCores = 1
+config.JobType.inputFiles = ['../phoEleReg_Run3_2023_PbPb.db']
 config.section_('Data')
-config.Data.splitting = 'LumiBased'
 config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/hintt/Run3_2023_PbPb/HiForest/'+date+'/MC'
 config.Data.publication = False
+config.Data.inputDBS = 'global'
 config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
 config.Data.ignoreLocality = True
-config.Site.whitelist = ['T1_US_*', 'T2_US_Caltech', 'T2_US_Purdue', 'T2_US_Vanderbilt', 'T2_ES_*', 'T1_FR_*', 'T2_FR_*', 'T2_CH_CERN']
+config.Site.whitelist = ['T1_US_*', 'T1_IT_*', 'T1_FR_*', 'T2_US_*', 'T2_CH_CERN']
 
 dataMap = {}
 '''
@@ -67,11 +67,13 @@ dataMap["BJet_pTHat15_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_BEnriched_pThat
 for key, val in dataMap.items():
     config.General.requestName = f'HiForest_{key}_5p36TeV_TuneCP5_2023Run3_'+date
     config.Data.inputDataset = val["PD"]
-    config.Data.inputDBS = 'global' if ("HINPbPbSpring23MiniAOD" in val["PD"]) else 'phys03'
     config.Data.unitsPerJob = val["Units"]
+    config.Data.splitting = val['Split'] if "Split" in val else 'LumiBased'
     config.JobType.maxMemoryMB = val["Memory"]
     config.JobType.maxJobRuntimeMin = val["RunTime"]
     config.Data.outputDatasetTag = config.General.requestName
+    config.Data.allowNonValidInputDataset = val["PRODUCTION"] if "PRODUCTION" in val else False
+    config.Data.totalUnits = val["MaxUnits"] if "MaxUnits" in val else 10000000000
     try:
         crabCommand('submit', config = config, dryrun=False)
     except HTTPException as hte:

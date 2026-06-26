@@ -12,11 +12,11 @@ config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_DATA.py'
-config.JobType.inputFiles = ['../phoEleReg_Run3_2023_PbPb.db']
+config.JobType.inputFiles = ['../phoEleReg_Run3_2025_PbPb.db']
 config.JobType.maxMemoryMB = 2999
 config.JobType.maxJobRuntimeMin = 1749
 config.section_('Data')
-config.Data.outLFNDirBase = '/store/group/cmst3/group/hintt/Run3_2023_PbPb/HiForest/'+date+'/DATA/PHOLEP'
+config.Data.outLFNDirBase = '/store/group/cmst3/group/hintt/Run3_2025_PbPb/HiForest/'+date+'/DATA/PHOLEP'
 config.Data.publication = False
 config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
@@ -35,11 +35,11 @@ def submit(config, dryrun):
 
 config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 25
-config.Data.lumiMask = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions23HI/Cert_Collisions2023HI_374288_375823_Golden.json'
+config.Data.lumiMask = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions25HI/Cert_Collisions2025_HI_399465_400426_Golden.json'
 config.Data.inputDBS = 'global'
 ## Submit the muon PDs
-for i in range(0, 32, 1):
-    config.General.requestName = f'HiForest_HIPhysicsRawPrime{i}_HIRun2023A_PromptReco_v2_PHOLEPSKIM_'+date
-    config.Data.inputDataset = f'/HIPhysicsRawPrime{i}/HIRun2023A-PromptReco-v2/MINIAOD'
+for i in range(0, 60, 1):
+    config.General.requestName = f'HiForest_HIPhysicsRawPrime{i}_HIRun2025A_PromptReco_v1_PHOLEPSKIM_'+date
+    config.Data.inputDataset = f'/HIPhysicsRawPrime{i}/HIRun2025A-PromptReco-v1/MINIAOD'
     config.Data.outputDatasetTag = config.General.requestName
     submit(config = config, dryrun=False)
