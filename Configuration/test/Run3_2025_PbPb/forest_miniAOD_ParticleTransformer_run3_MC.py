@@ -172,6 +172,12 @@ process.forest = cms.Path(
 process.particleFlowAnalyser.ptMin = 0.0
 process.ggHiNtuplizer.muonPtMin = 0.0
 
+#########################
+# Apply egamma regression
+#########################
+from HeavyIonsAnalysis.EGMAnalysis.applyEgammaRegression_cfi import applyEgammaRegression
+process = applyEgammaRegression(process, era = "Run3_2025_PbPb")
+
 # Select the types of jets filled
 matchJets = True             # Enables q/g and heavy flavor jet identification in MC
 jetPtMin = 15

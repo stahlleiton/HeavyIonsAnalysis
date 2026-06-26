@@ -129,6 +129,12 @@ process.forest = cms.Path(
 process.particleFlowAnalyser.ptMin = 0.0
 process.ggHiNtuplizer.muonPtMin = 0.0
 
+#########################
+# Apply egamma regression
+#########################
+from HeavyIonsAnalysis.EGMAnalysis.applyEgammaRegression_cfi import applyEgammaRegression
+process = applyEgammaRegression(process, era = "Run3_2023_PbPb")
+
 # Select the types of jets filled
 jetPtMin = 15
 jetAbsEtaMax = 2.5
@@ -174,15 +180,15 @@ process.load('HeavyIonsAnalysis.ZDCAnalysis.HiZDCfilter_cfi')
 process.pAna = cms.EndPath(process.skimanalysis)
 
 process.goodMuons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("slimmedMuons"),
+    src = cms.InputTag("slimmedMuons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0 && passed('CutBasedIdLoose')")
 )
 process.goodElectrons = cms.EDFilter("PATElectronSelector",
-    src = cms.InputTag("slimmedElectrons"),
+    src = cms.InputTag("slimmedElectrons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0")
 )
 process.goodPhotons = cms.EDFilter("PATPhotonSelector",
-    src = cms.InputTag("slimmedPhotons"),
+    src = cms.InputTag("slimmedPhotons::@skipCurrentProcess"),
     cut = cms.string("pt >= 25.0")
 )
 process.oneLeptonOrTwoJets1 = cms.EDFilter("PATCountFilter",
@@ -217,7 +223,6 @@ process.oneLeptonOrTwoJets2 = cms.EDFilter("PATCountFilter",
 )
 process.leptonJetSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.goodPhotons * process.PackedPFTowers * process.hiPuRho * process.oneLeptonOrTwoJets1 * process.oneLeptonOrTwoJets2)
 process.filterSequence = cms.Sequence(
-    process.clusterCompatibilityFilter *
     process.primaryVertexFilter *
     process.leptonJetSelection
 )
