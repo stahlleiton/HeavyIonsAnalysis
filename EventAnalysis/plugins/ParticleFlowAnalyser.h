@@ -37,6 +37,9 @@ private:
   std::vector<float> pfPhi_;
   std::vector<float> pfE_;
   std::vector<float> pfM_;
+  std::vector<int> pfChg_;
+  std::vector<float> pfDxy_;
+  std::vector<float> pfDz_;
 
   TTree* tree_;
 
