@@ -87,6 +87,7 @@ from HeavyIonsAnalysis.EventAnalysis.dummybranches_cff import dummy_branches_for
 process.hltanalysis.hltdummybranches = dummy_branches_for_PbPb_2023_HLT
 
 process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
+process.particleFlowAnalyser.addInfo = True
 ################################
 # electrons, photons, muons
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')

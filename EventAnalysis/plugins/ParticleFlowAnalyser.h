@@ -27,6 +27,7 @@ private:
 
   edm::EDGetTokenT<pat::PackedCandidateCollection> pfCandidateToken_;
 
+  bool addInfo_;
   float ptMin_;
   float absEtaMax_;
 
