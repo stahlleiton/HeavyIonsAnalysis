@@ -22,7 +22,7 @@ config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
 config.Site.ignoreGlobalBlacklist = True # to fix issue of missing blocks
 config.Data.ignoreLocality = True
-config.Site.whitelist = ['T1_US_*', 'T1_FR_*', 'T2_US_MIT', 'T2_FR_*', 'T2_US_Vanderbilt', 'T2_CH_CERN']
+config.Site.whitelist = ['T1_US_*', 'T1_FR_*', 'T2_US_MIT', 'T2_FR_*', 'T2_ES_*', 'T2_UK_*', 'T2_US_Vanderbilt', 'T2_CH_CERN']
 config.Site.blacklist = ['T2_CN_*', 'T2_TW_*', 'T2_DE_*', 'T2_EE_*']
 
 def submit(config, dryrun):
