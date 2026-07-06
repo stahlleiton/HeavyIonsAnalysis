@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, addNegTag = True):
+def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, addNegTag = True, usePuppi = True):
     # DeepNtuple settings
     R = str(int(jetR*10))
     jetCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute'] + ([] if isMC else ['L2L3Residual'])
@@ -86,20 +86,28 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
         getJetMCFlavour    = isMC,
         genJetCollection   = cms.InputTag(f"ak{R}GenJetsRecluster" if isMC else ""),
         genParticles       = cms.InputTag("prunedGenParticles" if isMC else ""),
-        jetCorrections     = ('AK4PFPuppi', jetCorrLevels[1:], 'None'),
+        jetCorrections     = ('AK4PF', jetCorrLevels, 'None'),
     )
     getattr(process,f'patJetsAK{R}PFUnsubJets').useLegacyJetMCFlavour = False
     getattr(process,f'patJetPartonMatchAK{R}PFUnsubJets').maxDeltaR = jetR
 
-    from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
-    makePuppiesFromMiniAOD(process, False)
-    from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJetsPuppi
-    setattr(process,f'ak{R}PFUnsubJets', ak4PFJetsPuppi.clone(
+    from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff import ak4PFJets
+    setattr(process,f'ak{R}PFUnsubJets', ak4PFJets.clone(
         src = 'packedPFCandidates',
         rParam = jetR,
-        jetPtMin = 0.,
+        jetPtMin = jetPtMin
     ))
     process.patAlgosToolsTask.add(getattr(process,f'ak{R}PFUnsubJets'))
+
+    if usePuppi:
+        from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
+        makePuppiesFromMiniAOD(process, False)
+        getattr(process,f'ak{R}PFUnsubJets').applyWeight = True
+        getattr(process,f'ak{R}PFUnsubJets').srcWeights = cms.InputTag("puppi")
+        getattr(process,f'ak{R}PFUnsubJets').jetPtMin = 0.
+        getattr(process,f'patJetCorrFactorsAK{R}PFUnsubJets').payload = 'AK4PFPuppi'
+        getattr(process,f'patJetCorrFactorsAK{R}PFUnsubJets').levels = jetCorrLevels[1:]
+        if isMC: getattr(process,f'patJetFlavourAssociationAK{R}PFUnsubJets').weights = cms.InputTag("puppi")
 
     # Create CHS subtracted reco jets
     from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
@@ -131,7 +139,6 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
             getattr(process, label).genJetMatch = ""
             getattr(process, label).genPartonMatch = ""
     else:
-        getattr(process,f'patJetFlavourAssociationAK{R}PFUnsubJets').weights = cms.InputTag("puppi")
         getattr(process,f'patJetPartonAssociationLegacyAK{R}PFUnsubJets').coneSizeToAssociate = min(jetR, 0.3)
         getattr(process,f'patJetPartonAssociationLegacyAK{R}PFJetsCHS').coneSizeToAssociate = min(jetR, 0.3)
 
