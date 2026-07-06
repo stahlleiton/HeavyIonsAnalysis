@@ -17,9 +17,7 @@ process.HiForestInfo.info = cms.vstring("HiForest, miniAOD, 141X, data")
 # input files
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring(
-        'root://xrootd-cms.infn.it//store/data/Run2024J/PPRefSingleMuon2/MINIAOD/PromptReco-v1/000/387/606/00000/cc433506-1095-4592-804e-e7e0a4d5bd69.root'
-    ),
+    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/data/Run2024J/PPRefHardProbes0/MINIAOD/PromptReco-v1/000/387/721/00000/ea539a5e-2e90-47e8-abfb-4d9aca3743f6.root'),
 )
 
 # number of events to process, set to -1 to process all events
@@ -57,48 +55,46 @@ process.TFileService = cms.Service("TFileService",
 # event analysis
 process.load('HeavyIonsAnalysis.EventAnalysis.hltanalysis_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.hievtanalyzer_data_cfi')
+process.hiEvtAnalyzer.doCentrality = False
+process.hiEvtAnalyzer.doEvtPlane = False
+process.hiEvtAnalyzer.doEvtPlaneFlat = False
+process.hiEvtAnalyzer.doHFfilters = False
 process.load('HeavyIonsAnalysis.EventAnalysis.skimanalysis_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.hltobject_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.l1object_cfi')
 process.metFilters = process.skimanalysis.clone(hltresults = "TriggerResults::RECO")
 
-from HeavyIonsAnalysis.EventAnalysis.hltobject_cfi import trigger_list_data_2024_ppref_skimmed
-process.hltobject.triggerNames = trigger_list_data_2024_ppref_skimmed
-
-process.hiEvtAnalyzer.doCentrality = False
-process.hiEvtAnalyzer.doHFfilters = False
+from HeavyIonsAnalysis.EventAnalysis.hltobject_cfi import trigger_list_data_2024_ppRef_skimmed
+process.hltobject.triggerNames = trigger_list_data_2024_ppRef_skimmed
+from HeavyIonsAnalysis.EventAnalysis.dummybranches_cff import dummy_branches_for_ppRef_2024_HLT
+process.hltanalysis.hltdummybranches = dummy_branches_for_ppRef_2024_HLT
 
 process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 ################################
 # electrons, photons, muons
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
+process.ggHiNtuplizer.electronSrc = "slimmedElectrons"
+process.ggHiNtuplizer.muonSrc = "slimmedMuons"
+process.ggHiNtuplizer.useValMapIso = False
+process.egammaSequence = cms.Sequence(process.ggHiNtuplizer)
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
-process.ggHiNtuplizer.doPhotons = False
 ################################
 # jet reco sequence
-process.load('HeavyIonsAnalysis.JetAnalysis.akCs4PFJetSequence_pponPbPb_data_cff')
-process.load('HeavyIonsAnalysis.JetAnalysis.hiFJSoftKillerAnalyzer_cff')
+process.load("HeavyIonsAnalysis.JetAnalysis.ak4PFJetSequence_ppref_data_cff")
 ################################
 # tracks
 process.load("HeavyIonsAnalysis.TrackAnalysis.TrackAnalyzers_cff")
 # muons
-process.ggHiNtuplizer.muonSrc = "slimmedMuons"
 process.load("HeavyIonsAnalysis.MuonAnalysis.muonAnalyzer_cfi")
+process.muonAnalyzer.muonSrc = "slimmedMuons"
 ###############################################################################
 
-# ZDC RecHit Producer
-process.load('HeavyIonsAnalysis.ZDCAnalysis.QWZDC2018Producer_cfi')
-process.load('HeavyIonsAnalysis.ZDCAnalysis.QWZDC2018RecHit_cfi')
-process.load('HeavyIonsAnalysis.ZDCAnalysis.zdcanalyzer_cfi')
-
-process.zdcdigi.SOI = cms.untracked.int32(2)
-process.zdcanalyzer.doZDCRecHit = False
-process.zdcanalyzer.doZDCDigi = True
-process.zdcanalyzer.zdcRecHitSrc = cms.InputTag("QWzdcreco")
-process.zdcanalyzer.zdcDigiSrc = cms.InputTag("hcalDigis", "ZDC")
-process.zdcanalyzer.calZDCDigi = False
-process.zdcanalyzer.verbose = False
-process.zdcanalyzer.nZdcTs = cms.int32(6)
+#########################
+# ZDC RecHit Producer && Analyzer
+#########################
+# to prevent crash related to HcalSeverityLevelComputerRcd record
+process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
+process.load('HeavyIonsAnalysis.ZDCAnalysis.ZDCAnalyzersPP_cff')
 
 ###############################################################################
 # main forest sequence
@@ -110,10 +106,9 @@ process.forest = cms.Path(
     process.l1object +
     process.unpackedTracksAndVertices +
     process.particleFlowAnalyser +
-    process.ggHiNtuplizer +
-    process.hiFJSoftKillerAnalyzer +
+    process.egammaSequence +
     process.metFilters +
-    process.zdcanalyzer
+    process.zdcSequencePP
     )
 
 #customisation
@@ -129,28 +124,29 @@ doHIJetID = True             # Fill jet ID and composition information branches
 doWTARecluster = True        # Add jet phi and eta for WTA axis
 
 # add candidate tagging
-for jetR in [0.3, 0.4]:
+for jetR in [0.4]:
     R = str(int(jetR*10))
-    from HeavyIonsAnalysis.JetAnalysis.deepNtupleSettings_cff import candidateBtaggingMiniAOD
-    candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR, jetCorrLevels = ['L2Relative', 'L2L3Residual'])
+    from HeavyIonsAnalysis.JetAnalysis.deepNtupleSettings_ppRef_cff import candidateBtaggingMiniAOD
+    candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR)
 
     # setup jet analyzer
-    setattr(process,f'akCs{R}PFJetAnalyzer', process.akCs4PFJetAnalyzer.clone())
-    getattr(process,f'akCs{R}PFJetAnalyzer').jetTag = f'selectedUpdatedPatJetsAKCs{R}DeepFlavour'
-    getattr(process,f'akCs{R}PFJetAnalyzer').jetName = f'akCs{R}PF'
-    getattr(process,f'akCs{R}PFJetAnalyzer').rParam = jetR
-    getattr(process,f'akCs{R}PFJetAnalyzer').doHiJetID = doHIJetID
-    getattr(process,f'akCs{R}PFJetAnalyzer').doWTARecluster = doWTARecluster
-    getattr(process,f'akCs{R}PFJetAnalyzer').useNewBtaggers = True
-    getattr(process,f'akCs{R}PFJetAnalyzer').jetPtMin = jetPtMin
-    getattr(process,f'akCs{R}PFJetAnalyzer').useRawPt = True
-    getattr(process,f'akCs{R}PFJetAnalyzer').jetAbsEtaMax = cms.untracked.double(jetAbsEtaMax)
-    getattr(process,f'akCs{R}PFJetAnalyzer').pfJetProbabilityBJetTag = cms.untracked.string(f"pfJetProbabilityBJetTagsAKCs{R}DeepFlavour")
-    getattr(process,f'akCs{R}PFJetAnalyzer').pfDeepCSVJetTags = cms.untracked.string(f"pfDeepCSVJetTagsAKCs{R}DeepFlavour")
-    getattr(process,f'akCs{R}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAKCs{R}DeepFlavour")
-    getattr(process,f'akCs{R}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAKCs{R}DeepFlavour")
-    getattr(process,f'akCs{R}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAKCs{R}DeepFlavour")
-    process.forest += getattr(process,f'akCs{R}PFJetAnalyzer')
+    setattr(process,f'ak{R}PFJetAnalyzer', process.ak4PFJetAnalyzer.clone())
+    getattr(process,f'ak{R}PFJetAnalyzer').jetTag = f'selectedUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour'
+    getattr(process,f'ak{R}PFJetAnalyzer').jetName = f'ak{R}PF'
+    getattr(process,f'ak{R}PFJetAnalyzer').rParam = jetR
+    getattr(process,f'ak{R}PFJetAnalyzer').doHiJetID = doHIJetID
+    getattr(process,f'ak{R}PFJetAnalyzer').doWTARecluster = doWTARecluster
+    getattr(process,f'ak{R}PFJetAnalyzer').jetPtMin = jetPtMin
+    getattr(process,f'ak{R}PFJetAnalyzer').useRawPt = True
+    getattr(process,f'ak{R}PFJetAnalyzer').jetAbsEtaMax = cms.untracked.double(jetAbsEtaMax)
+    getattr(process,f'ak{R}PFJetAnalyzer').pfJetProbabilityBJetTag = cms.untracked.string(f"pfJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeOnlyJetProbabilityBJetTag = cms.untracked.string(f"pfNegativeOnlyJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepCSVJetTags = cms.untracked.string(f"pfDeepCSVJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    process.forest += getattr(process,f'ak{R}PFJetAnalyzer')
 
 
 #########################
@@ -163,26 +159,35 @@ process.pprimaryVertexFilter = cms.Path(process.primaryVertexFilter)
 process.pAna = cms.EndPath(process.skimanalysis)
 
 process.goodMuons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("slimmedMuons"),
+    src = cms.InputTag("slimmedMuons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0 && passed('CutBasedIdLoose')")
 )
 process.goodElectrons = cms.EDFilter("PATElectronSelector",
-    src = cms.InputTag("slimmedElectrons"),
+    src = cms.InputTag("slimmedElectrons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0")
 )
-process.oneLepton = cms.EDFilter("PATLeptonCountFilter",
+process.goodPhotons = cms.EDFilter("PATPhotonSelector",
+    src = cms.InputTag("slimmedPhotons::@skipCurrentProcess"),
+    cut = cms.string("pt >= 25.0")
+)
+process.oneMuon = cms.EDFilter("PATCandViewCountFilter",
+    minNumber = cms.uint32(1),
+    maxNumber = cms.uint32(1000000),
+    src = cms.InputTag("goodMuons")
+)
+process.oneLepton = cms.EDFilter("PATCountFilter",
     electronSource = cms.InputTag("goodElectrons"),
-    muonSource     = cms.InputTag("goodMuons"),
+    muonSource     = cms.InputTag(""),
     tauSource      = cms.InputTag(""),
+    photonSource   = cms.untracked.InputTag("goodPhotons"),
     countElectrons = cms.bool(True),
-    countMuons     = cms.bool(True),
+    countMuons     = cms.bool(False),
     countTaus      = cms.bool(False),
     minNumber = cms.uint32(1),
     maxNumber = cms.uint32(1000000),
 )
-process.leptonSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.oneLepton)
+process.leptonSelection = cms.Sequence(process.goodMuons * ~process.oneMuon * process.goodElectrons * process.goodPhotons * process.oneLepton)
 process.filterSequence = cms.Sequence(
-    process.clusterCompatibilityFilter *
     process.primaryVertexFilter *
     process.leptonSelection
 )
@@ -193,4 +198,3 @@ process.skimanalysis.superFilters = cms.vstring("superFilterPath")
 for path in process.paths:
     if path != "superFilterPath":
         getattr(process, path)._seq = process.filterSequence * getattr(process,path)._seq
-

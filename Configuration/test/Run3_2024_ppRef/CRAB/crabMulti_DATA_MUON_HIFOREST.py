@@ -11,7 +11,7 @@ config.General.transferOutputs = True
 config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_DATA.py'
+config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MUON_DATA.py'
 config.JobType.maxMemoryMB = 2999
 config.JobType.maxJobRuntimeMin = 1749
 config.section_('Data')
@@ -36,9 +36,9 @@ config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 20
 config.Data.lumiMask = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions24/Cert_Collisions2024_ppref_387474_387721_golden.json'
 config.Data.inputDBS = 'global'
-## Submit the electron PDs
-for i in range(0, 5, 1):
-    config.General.requestName = f'HiForest_PPRefHardProbes{i}_Run2024J_PromptReco_v1_EGMSKIM_'+date
-    config.Data.inputDataset = f'/PPRefHardProbes{i}/Run2024J-PromptReco-v1/MINIAOD'
+## Submit the muon PDs
+for i in range(0, 4, 1):
+    config.General.requestName = f'HiForest_PPRefSingleMuon{i}_Run2024J_PromptReco_v1_MUONSKIM_'+date
+    config.Data.inputDataset = f'/PPRefSingleMuon{i}/Run2024J-PromptReco-v1/MINIAOD'
     config.Data.outputDatasetTag = config.General.requestName
     submit(config = config, dryrun=False)

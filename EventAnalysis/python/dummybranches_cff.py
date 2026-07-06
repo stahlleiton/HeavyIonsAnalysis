@@ -16,6 +16,12 @@ dummy_branches_for_PbPb_2024_HLT = cms.vstring([
     'HLT_HIL2SingleMu7_v7',
 ])
 
+dummy_branches_for_ppRef_2024_HLT = cms.vstring([
+    'HLT_PPRefGEDPhoton30_v6',
+    'HLT_PPRefEle20Gsf_v6',
+    'HLT_PPRefL2SingleMu7_v6',
+])
+
 dummy_branches_for_PbPb_2025_HLT = cms.vstring([
     'HLT_HIMinimumBiasHF1AND_v8',
     'HLT_HIMinimumBiasHF1ANDZDC1nOR_v6',
