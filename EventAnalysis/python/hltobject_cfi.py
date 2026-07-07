@@ -31,8 +31,8 @@ trigger_list_data_2025_pO_skimmed = cms.vstring(
     'HLT_OxyL1SingleEG10_v',
     'HLT_OxyL1SingleEG15_v',
 )
-
 trigger_list_data_2025_OO_skimmed = cms.vstring(trigger_list_data_2025_pO_skimmed)
+trigger_list_data_2025_NeNe_skimmed = cms.vstring(trigger_list_data_2025_pO_skimmed)
 
 trigger_list_data_2025_skimmed = cms.vstring(
     'HLT_HIGEDPhoton10_v',
