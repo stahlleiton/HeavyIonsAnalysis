@@ -73,7 +73,6 @@ process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 ################################
 # electrons, photons, muons
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
-process.ggHiNtuplizer.electronSrc = "slimmedElectrons"
 process.ggHiNtuplizer.muonSrc = "slimmedMuons"
 process.ggHiNtuplizer.useValMapIso = False
 process.egammaSequence = cms.Sequence(process.ggHiNtuplizer)
@@ -130,23 +129,24 @@ for jetR in [0.4]:
     candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR)
 
     # setup jet analyzer
-    setattr(process,f'ak{R}PFJetAnalyzer', process.ak4PFJetAnalyzer.clone())
-    getattr(process,f'ak{R}PFJetAnalyzer').jetTag = f'selectedUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour'
-    getattr(process,f'ak{R}PFJetAnalyzer').jetName = f'ak{R}PF'
-    getattr(process,f'ak{R}PFJetAnalyzer').rParam = jetR
-    getattr(process,f'ak{R}PFJetAnalyzer').doHiJetID = doHIJetID
-    getattr(process,f'ak{R}PFJetAnalyzer').doWTARecluster = doWTARecluster
-    getattr(process,f'ak{R}PFJetAnalyzer').jetPtMin = jetPtMin
-    getattr(process,f'ak{R}PFJetAnalyzer').useRawPt = True
-    getattr(process,f'ak{R}PFJetAnalyzer').jetAbsEtaMax = cms.untracked.double(jetAbsEtaMax)
-    getattr(process,f'ak{R}PFJetAnalyzer').pfJetProbabilityBJetTag = cms.untracked.string(f"pfJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeOnlyJetProbabilityBJetTag = cms.untracked.string(f"pfNegativeOnlyJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepCSVJetTags = cms.untracked.string(f"pfDeepCSVJetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
-    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
-    process.forest += getattr(process,f'ak{R}PFJetAnalyzer')
+    jL = R
+    setattr(process,f'ak{jL}PFJetAnalyzer', process.ak4PFJetAnalyzer.clone())
+    getattr(process,f'ak{jL}PFJetAnalyzer').jetTag = f'selectedUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour'
+    getattr(process,f'ak{jL}PFJetAnalyzer').jetName = f'ak{jL}PF'
+    getattr(process,f'ak{jL}PFJetAnalyzer').rParam = jetR
+    getattr(process,f'ak{jL}PFJetAnalyzer').doHiJetID = doHIJetID
+    getattr(process,f'ak{jL}PFJetAnalyzer').doWTARecluster = doWTARecluster
+    getattr(process,f'ak{jL}PFJetAnalyzer').jetPtMin = jetPtMin
+    getattr(process,f'ak{jL}PFJetAnalyzer').useRawPt = True
+    getattr(process,f'ak{jL}PFJetAnalyzer').jetAbsEtaMax = cms.untracked.double(jetAbsEtaMax)
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfJetProbabilityBJetTag = cms.untracked.string(f"pfJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfNegativeOnlyJetProbabilityBJetTag = cms.untracked.string(f"pfNegativeOnlyJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfDeepCSVJetTags = cms.untracked.string(f"pfDeepCSVJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    process.forest += getattr(process,f'ak{jL}PFJetAnalyzer')
 
 
 #########################

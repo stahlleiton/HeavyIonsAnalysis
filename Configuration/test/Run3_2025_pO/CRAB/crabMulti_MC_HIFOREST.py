@@ -5,13 +5,13 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2026_05_16'
+date = '2026_06_26'
 config.General.workArea = 'crab_projects/'+date+'/MC'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../forest_miniAOD_run3_pO_MC.py'
+config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MC.py'
 config.JobType.maxMemoryMB = 3500
 config.JobType.maxJobRuntimeMin = 2749
 config.section_('Data')

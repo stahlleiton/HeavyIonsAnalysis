@@ -30,6 +30,8 @@ dummy_branches_for_pO_2025_HLT = cms.vstring([
     'HLT_OxyL1SingleMu0_v1',
 ])
 
+dummy_branches_for_OO_2025_HLT = dummy_branches_for_pO_2025_HLT.copy()
+
 dummy_branches_for_PbPb_2025_HLT = cms.vstring([
     'HLT_HIMinimumBiasHF1AND_v8',
     'HLT_HIMinimumBiasHF1ANDZDC1nOR_v6',
