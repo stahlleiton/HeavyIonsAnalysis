@@ -25,6 +25,13 @@ trigger_list_data_2024_ppRef_skimmed = cms.vstring(
     'HLT_PPRefL2SingleMu7_v',
 )
 
+trigger_list_data_2025_pO_skimmed = cms.vstring(
+    'HLT_OxyL1SingleMuOpen_v',
+    'HLT_OxyL1SingleMu0_v',
+    'HLT_OxyL1SingleEG10_v',
+    'HLT_OxyL1SingleEG15_v',
+)
+
 trigger_list_data_2025_skimmed = cms.vstring(
     'HLT_HIGEDPhoton10_v',
     'HLT_HIL2SingleMu7_v',

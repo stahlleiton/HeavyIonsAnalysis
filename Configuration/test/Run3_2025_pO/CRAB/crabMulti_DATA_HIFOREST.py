@@ -5,39 +5,40 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-tryMulti = True
-date = '2026_05_16'
-config.General.workArea = 'crab_projects/'+date+'/DATA'
+date = '2026_06_26'
+config.General.workArea = 'crab_projects/'+date+'/DATA/PHOLEP'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../forest_miniAOD_run3_pO_DATA.py'
-config.JobType.maxMemoryMB = 3000
-config.JobType.maxJobRuntimeMin = 2749
+config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_DATA.py'
+config.JobType.maxMemoryMB = 2999
+config.JobType.maxJobRuntimeMin = 1749
 config.section_('Data')
-config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/CERN/pO2025/HiForest/'+date+'/DATA'
+config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/CERN/pO2025/HiForest/'+date+'/DATA/PHOLEP'
 config.Data.publication = False
 config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
 config.Site.ignoreGlobalBlacklist = True # to fix issue of missing blocks
+config.Data.ignoreLocality = True
+config.Site.whitelist = ['T1_US_*', 'T1_FR_*', 'T2_US_MIT', 'T2_FR_*', 'T2_ES_*', 'T2_UK_*', 'T2_US_Vanderbilt', 'T2_CH_CERN']
+config.Site.blacklist = ['T2_CN_*', 'T2_TW_*', 'T2_DE_*', 'T2_EE_*']
 
 def submit(config, dryrun):
     try:
-        crabCommand('submit', config = config, dryrun=False)
+        crabCommand('submit', config = config, dryrun=dryrun)
     except HTTPException as hte:
         print("Failed submitting task: %s" % (hte.headers))
     except ClientException as cle:
         print("Failed submitting task: %s" % (cle))
 
-if tryMulti:
-    config.Data.splitting = 'LumiBased'
-    config.Data.unitsPerJob = 250
-    config.Data.lumiMask = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions25pO/pO_golden.json'
-    config.Data.inputDBS = 'global'
-    ## Submit the PDs
-    for i in range(0, 60, 1):
-        config.General.requestName = f'HiForest_IonPhysics{i}_pORun2025_PromptReco_v1_SKIM_'+date
-        config.Data.inputDataset = f'/IonPhysics{i}/pORun2025-PromptReco-v1/MINIAOD'
-        config.Data.outputDatasetTag = config.General.requestName
-        submit(config = config, dryrun=False)
+config.Data.splitting = 'LumiBased'
+config.Data.unitsPerJob = 250
+config.Data.lumiMask = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions25pO/pO_golden.json'
+config.Data.inputDBS = 'global'
+## Submit the PDs
+for i in range(0, 60, 1):
+    config.General.requestName = f'HiForest_IonPhysics{i}_pORun2025_PromptReco_v1_PHOLEPSKIM_'+date
+    config.Data.inputDataset = f'/IonPhysics{i}/pORun2025-PromptReco-v1/MINIAOD'
+    config.Data.outputDatasetTag = config.General.requestName
+    submit(config = config, dryrun=False)

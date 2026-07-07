@@ -17,9 +17,7 @@ process.HiForestInfo.info = cms.vstring("HiForest, miniAOD, 150X, data")
 # input files
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring(
-        'root://xrootd-cms.infn.it//store/data/pORun2025/IonPhysics0/MINIAOD/PromptReco-v1/000/394/007/00000/ad40e573-5f90-4a6b-a69c-2b8ef3c12137.root'
-    ),
+    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/data/pORun2025/IonPhysics0/MINIAOD/PromptReco-v1/000/394/007/00000/ad40e573-5f90-4a6b-a69c-2b8ef3c12137.root'),
 )
 
 # number of events to process, set to -1 to process all events
@@ -73,24 +71,22 @@ process.TFileService = cms.Service("TFileService",
 # event analysis
 process.load('HeavyIonsAnalysis.EventAnalysis.hltanalysis_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.hievtanalyzer_data_cfi')
+process.hiEvtAnalyzer.doHFfilters = False
 process.load('HeavyIonsAnalysis.EventAnalysis.skimanalysis_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.hltobject_cfi')
 process.load('HeavyIonsAnalysis.EventAnalysis.l1object_cfi')
 process.metFilters = process.skimanalysis.clone(hltresults = "TriggerResults::RECO")
-process.hiEvtAnalyzer.doHFfilters = False
 
-process.hltobject.triggerNames = cms.vstring(
-    'HLT_OxyL1SingleMu0_v',
-    'HLT_OxyL1SingleMuOpen_v',
-    'HLT_OxyL1SingleEG10_v',
-    'HLT_OxyL1SingleEG15_v',
-    'HLT_MinimumBiasHF_OR_BptxAND_v'
-)
+from HeavyIonsAnalysis.EventAnalysis.hltobject_cfi import trigger_list_data_2025_pO_skimmed
+process.hltobject.triggerNames = trigger_list_data_2025_pO_skimmed
+from HeavyIonsAnalysis.EventAnalysis.dummybranches_cff import dummy_branches_for_pO_2025_HLT
+process.hltanalysis.hltdummybranches = dummy_branches_for_pO_2025_HLT
 
 process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 ################################
 # electrons, photons, muons
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
+process.load('HeavyIonsAnalysis.JetAnalysis.hiFJRhoAnalyzer_cff')
 process.load('HeavyIonsAnalysis.EGMAnalysis.hiElectrons_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.correctedPatElectronProducer_cfi')
 from RecoEgamma.EgammaTools.regressionModifier_cfi import regressionModifier
@@ -101,25 +97,32 @@ process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024
 process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
 process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
 process.hiElectrons.era = "Run3_2024_PbPb"
+process.load('HeavyIonsAnalysis.EGMAnalysis.correctedPatPhotonProducer_cfi')
+process.correctedPhotons = process.correctedPatPhotonProducer.clone(src = "slimmedPhotons", centrality = "centralityBin:HFtowers", minPt = 15)
+process.correctedPhotons.correctionFile = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2025_pO/SuperClusterSS_pO2025_DATA.dat"
+process.ggHiNtuplizer.photonSrc = "correctedPhotons"
 process.ggHiNtuplizer.electronSrc = "hiElectrons"
-process.egammaSequence = cms.Sequence(process.correctedElectrons * process.hiElectrons * process.ggHiNtuplizer)
+process.ggHiNtuplizer.muonSrc = "slimmedMuons"
+process.ggHiNtuplizer.useValMapIso = False
+process.egammaSequence = cms.Sequence(process.rhoSequence * process.correctedElectrons * process.correctedPhotons * process.hiElectrons * process.ggHiNtuplizer)
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
-process.ggHiNtuplizer.doPhotons = False
 ################################
 # jet reco sequence
-process.load('HeavyIonsAnalysis.JetAnalysis.akCs4PFJetSequence_pponPbPb_data_cff')
+process.load("HeavyIonsAnalysis.JetAnalysis.ak4PFJetSequence_ppref_data_cff")
 ################################
 # tracks
 process.load("HeavyIonsAnalysis.TrackAnalysis.TrackAnalyzers_cff")
 # muons
-process.load('HeavyIonsAnalysis.JetAnalysis.hiFJRhoAnalyzer_cff')
-process.load('HeavyIonsAnalysis.MuonAnalysis.hiMuons_cfi')
-process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_2024_PbPb/muiso_BDT.ubj"
-process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
-process.hiMuons.era = "Run3_2024_PbPb"
-process.ggHiNtuplizer.muonSrc = "hiMuons"
-process.muonSequence = cms.Sequence(process.rhoSequence * process.hiMuons)
 process.load("HeavyIonsAnalysis.MuonAnalysis.muonAnalyzer_cfi")
+process.muonAnalyzer.muonSrc = "slimmedMuons"
+###############################################################################
+
+#########################
+# ZDC RecHit Producer && Analyzer
+#########################
+# to prevent crash related to HcalSeverityLevelComputerRcd record
+process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
+process.load('HeavyIonsAnalysis.ZDCAnalysis.ZDCAnalyzersPP_cff')
 
 ###############################################################################
 # main forest sequence
@@ -132,15 +135,48 @@ process.forest = cms.Path(
     process.l1object +
     process.unpackedTracksAndVertices +
     process.particleFlowAnalyser +
-    process.muonSequence +
     process.egammaSequence +
-    process.ggHiNtuplizer +
-    process.metFilters
+    process.metFilters +
+    process.zdcSequencePP
     )
 
 #customisation
 process.particleFlowAnalyser.ptMin = 0.0
 process.ggHiNtuplizer.muonPtMin = 0.0
+
+# Select the types of jets filled
+jetPtMin = 15
+jetAbsEtaMax = 2.5
+
+# Choose which additional information is added to jet trees
+doHIJetID = True             # Fill jet ID and composition information branches
+doWTARecluster = True        # Add jet phi and eta for WTA axis
+
+# add candidate tagging
+for jetR in [0.4]:
+    R = str(int(jetR*10))
+    from HeavyIonsAnalysis.JetAnalysis.deepNtupleSettings_ppRef_cff import candidateBtaggingMiniAOD
+    candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR)
+
+    # setup jet analyzer
+    setattr(process,f'ak{R}PFJetAnalyzer', process.ak4PFJetAnalyzer.clone())
+    getattr(process,f'ak{R}PFJetAnalyzer').jetTag = f'selectedUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour'
+    getattr(process,f'ak{R}PFJetAnalyzer').jetName = f'ak{R}PF'
+    getattr(process,f'ak{R}PFJetAnalyzer').rParam = jetR
+    getattr(process,f'ak{R}PFJetAnalyzer').doHiJetID = doHIJetID
+    getattr(process,f'ak{R}PFJetAnalyzer').doWTARecluster = doWTARecluster
+    getattr(process,f'ak{R}PFJetAnalyzer').jetPtMin = jetPtMin
+    getattr(process,f'ak{R}PFJetAnalyzer').useRawPt = True
+    getattr(process,f'ak{R}PFJetAnalyzer').jetAbsEtaMax = cms.untracked.double(jetAbsEtaMax)
+    getattr(process,f'ak{R}PFJetAnalyzer').pfJetProbabilityBJetTag = cms.untracked.string(f"pfJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeOnlyJetProbabilityBJetTag = cms.untracked.string(f"pfNegativeOnlyJetProbabilityBJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepCSVJetTags = cms.untracked.string(f"pfDeepCSVJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    getattr(process,f'ak{R}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour")
+    process.forest += getattr(process,f'ak{R}PFJetAnalyzer')
+
 
 #########################
 # Event Selection -> add the needed filters here
@@ -152,24 +188,29 @@ process.pprimaryVertexFilter = cms.Path(process.primaryVertexFilter)
 process.pAna = cms.EndPath(process.skimanalysis)
 
 process.goodMuons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("slimmedMuons"),
+    src = cms.InputTag("slimmedMuons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0 && passed('CutBasedIdLoose')")
 )
 process.goodElectrons = cms.EDFilter("PATElectronSelector",
-    src = cms.InputTag("slimmedElectrons"),
+    src = cms.InputTag("slimmedElectrons::@skipCurrentProcess"),
     cut = cms.string("pt >= 15.0")
 )
-process.oneLepton = cms.EDFilter("PATLeptonCountFilter",
+process.goodPhotons = cms.EDFilter("PATPhotonSelector",
+    src = cms.InputTag("slimmedPhotons::@skipCurrentProcess"),
+    cut = cms.string("pt >= 25.0")
+)
+process.oneLepton = cms.EDFilter("PATCountFilter",
     electronSource = cms.InputTag("goodElectrons"),
     muonSource     = cms.InputTag("goodMuons"),
     tauSource      = cms.InputTag(""),
+    photonSource   = cms.untracked.InputTag("goodPhotons"),
     countElectrons = cms.bool(True),
     countMuons     = cms.bool(True),
     countTaus      = cms.bool(False),
     minNumber = cms.uint32(1),
     maxNumber = cms.uint32(1000000),
 )
-process.leptonSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.oneLepton)
+process.leptonSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.goodPhotons * process.oneLepton)
 process.filterSequence = cms.Sequence(
     process.primaryVertexFilter *
     process.leptonSelection
@@ -181,4 +222,3 @@ process.skimanalysis.superFilters = cms.vstring("superFilterPath")
 for path in process.paths:
     if path != "superFilterPath":
         getattr(process, path)._seq = process.filterSequence * getattr(process,path)._seq
-
