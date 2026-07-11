@@ -62,7 +62,7 @@ dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_EMEnriched_pThat-20_T
 
 ## Submit PDs
 for key, val in dataMap.items():
-    config.General.requestName = f'HiForest_{key}_5p36TeV_TuneCP5_NeNe2025Run3_'+date
+    config.General.requestName = f'HiForest_{key}_NeNe_5p36TeV_TuneCP5_2025Run3_'+date
     config.Data.inputDataset = val["PD"]
     config.Data.unitsPerJob = val["Units"]
     config.Data.splitting = val['Split'] if "Split" in val else 'LumiBased'
