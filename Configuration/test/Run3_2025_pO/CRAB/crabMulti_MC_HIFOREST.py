@@ -12,8 +12,6 @@ config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MC.py'
-config.JobType.maxMemoryMB = 3500
-config.JobType.maxJobRuntimeMin = 2749
 config.section_('Data')
 config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/CERN/pO2025/HiForest/'+date+'/MC'
 config.Data.publication = False
@@ -23,7 +21,7 @@ config.Site.storageSite = 'T2_CH_CERN'
 
 def submit(config, dryrun):
     try:
-        crabCommand('submit', config = config, dryrun=False)
+        crabCommand('submit', config = config, dryrun=dryrun)
     except HTTPException as hte:
         print("Failed submitting task: %s" % (hte.headers))
     except ClientException as cle:
