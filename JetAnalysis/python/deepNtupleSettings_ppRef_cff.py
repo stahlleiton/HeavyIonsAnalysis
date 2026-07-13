@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, addNegTag = True, usePuppi = True):
+def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, addNegTag = True):
     # DeepNtuple settings
     R = str(int(jetR*10))
     jetCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute'] + ([] if isMC else ['L2L3Residual'])
@@ -69,46 +69,6 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
         for mod in ["inclusiveCandidateNegativeVertexFinder","candidateNegativeVertexMerger","candidateNegativeVertexArbitrator","inclusiveCandidateNegativeSecondaryVertices"]:
             process.svTask.add(getattr(process, mod))
 
-    # Create unsubtracted reco jets
-    from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
-    addJetCollection(
-        process,
-        postfix            = "UnsubJets",
-        labelName          = f"AK{R}PF",
-        jetSource          = cms.InputTag(f"ak{R}PFUnsubJets"),
-        algo               = "ak", #name of algo must be in this format
-        rParam             = jetR,
-        pvSource           = cms.InputTag("offlineSlimmedPrimaryVertices"),
-        pfCandidates       = cms.InputTag("packedPFCandidates"),
-        svSource           = cms.InputTag("slimmedSecondaryVertices"),
-        muSource           = cms.InputTag("slimmedMuons"),
-        elSource           = cms.InputTag("slimmedElectrons"),
-        getJetMCFlavour    = isMC,
-        genJetCollection   = cms.InputTag(f"ak{R}GenJetsRecluster" if isMC else ""),
-        genParticles       = cms.InputTag("prunedGenParticles" if isMC else ""),
-        jetCorrections     = ('AK4PF', jetCorrLevels, 'None'),
-    )
-    getattr(process,f'patJetsAK{R}PFUnsubJets').useLegacyJetMCFlavour = False
-    getattr(process,f'patJetPartonMatchAK{R}PFUnsubJets').maxDeltaR = jetR
-
-    from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff import ak4PFJets
-    setattr(process,f'ak{R}PFUnsubJets', ak4PFJets.clone(
-        src = 'packedPFCandidates',
-        rParam = jetR,
-        jetPtMin = jetPtMin
-    ))
-    process.patAlgosToolsTask.add(getattr(process,f'ak{R}PFUnsubJets'))
-
-    if usePuppi:
-        from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
-        makePuppiesFromMiniAOD(process, False)
-        getattr(process,f'ak{R}PFUnsubJets').applyWeight = True
-        getattr(process,f'ak{R}PFUnsubJets').srcWeights = cms.InputTag("puppi")
-        getattr(process,f'ak{R}PFUnsubJets').jetPtMin = 0.
-        getattr(process,f'patJetCorrFactorsAK{R}PFUnsubJets').payload = 'AK4PFPuppi'
-        getattr(process,f'patJetCorrFactorsAK{R}PFUnsubJets').levels = jetCorrLevels[1:]
-        if isMC: getattr(process,f'patJetFlavourAssociationAK{R}PFUnsubJets').weights = cms.InputTag("puppi")
-
     # Create CHS subtracted reco jets
     from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
     addJetCollection(
@@ -131,7 +91,7 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
     getattr(process,f'patJetPartonMatchAK{R}PFJetsCHS').maxDeltaR = jetR
 
     if not isMC:
-        for label in [f"patJetsAK{R}PFUnsubJets", f"patJetsAK{R}PFJetsCHS"]:
+        for label in [f"patJetsAK{R}PFJetsCHS"]:
             getattr(process, label).addGenJetMatch = False
             getattr(process, label).addGenPartonMatch = False
             getattr(process, label).embedGenJetMatch = False
@@ -139,7 +99,6 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
             getattr(process, label).genJetMatch = ""
             getattr(process, label).genPartonMatch = ""
     else:
-        getattr(process,f'patJetPartonAssociationLegacyAK{R}PFUnsubJets').coneSizeToAssociate = min(jetR, 0.3)
         getattr(process,f'patJetPartonAssociationLegacyAK{R}PFJetsCHS').coneSizeToAssociate = min(jetR, 0.3)
 
     from CommonTools.ParticleFlow.pfCHS_cff import pfCHS
@@ -170,29 +129,20 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, ad
         explicitJTA = False
     )
 
-    setattr(process,f'unsubUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour', cms.EDProducer("JetMatcherDR",
-        source = cms.InputTag(f"updatedPatJetsAK{R}PFJetsCHSDeepFlavour"),
-        matched = cms.InputTag(f"patJetsAK{R}PFUnsubJets")
-    ))
-    process.patAlgosToolsTask.add(getattr(process,f'unsubUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour'))
+    # Add UParT v2 model
+    getattr(process,f"pfUnifiedParticleTransformerAK4JetTagsAK{R}PFJetsCHSDeepFlavour").model_path = 'RecoBTag/Combined/data/UParTAK4/PUPPI/V01/UParTAK4_v2.onnx'
+    getattr(process,f"pfUnifiedParticleTransformerAK4TagInfosAK{R}PFJetsCHSDeepFlavour").fix_lt_sorting = True
 
     getattr(process,f'pfImpactParameterTagInfosAK{R}PFJetsCHSDeepFlavour').maxDeltaR = jetR
     taginfos = [f"pfDeepFlavourTagInfosAK{R}PFJetsCHSDeepFlavour", f"pfParticleTransformerAK4TagInfosAK{R}PFJetsCHSDeepFlavour", f"pfUnifiedParticleTransformerAK4TagInfosAK{R}PFJetsCHSDeepFlavour"]
     for taginfo in taginfos:
         getattr(process, taginfo).jet_radius = jetR
-        getattr(process, taginfo).unsubjet_map = f"unsubUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour"
 
     if hasattr(process,f'updatedPatJetsTransientCorrectedAK{R}PFJetsCHSDeepFlavour'):
         getattr(process,f'updatedPatJetsTransientCorrectedAK{R}PFJetsCHSDeepFlavour').addTagInfos = True
         getattr(process,f'updatedPatJetsTransientCorrectedAK{R}PFJetsCHSDeepFlavour').addBTagInfo = True
     else:
         raise ValueError(f'I could not find updatedPatJetsTransientCorrectedAK{R}PFJetsCHSDeepFlavour to embed the tagInfos, please check the cfg')
-
-    # Match with unsubtracted jets
-    setattr(process,f'unsubAK{R}JetMap', getattr(process,f'unsubUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour').clone(
-        source = f"selectedUpdatedPatJetsAK{R}PFJetsCHSDeepFlavour"
-    ))
-    process.patAlgosToolsTask.add(getattr(process,f'unsubAK{R}JetMap'))
 
     # Add extra b tagging algos
     from RecoBTag.ImpactParameter.pfJetProbabilityBJetTags_cfi import pfJetProbabilityBJetTags

@@ -158,8 +158,7 @@ for jetR in [0.4]:
     getattr(process,f'ak{jL}PFJetAnalyzer').jetName = f'ak{jL}PF'
     getattr(process,f'ak{jL}PFJetAnalyzer').rParam = jetR
     getattr(process,f'ak{jL}PFJetAnalyzer').matchJets = matchJets
-    getattr(process,f'ak{jL}PFJetAnalyzer').matchTag = f'patJetsAK{R}PFUnsubJets'
-    getattr(process,f'ak{jL}PFJetAnalyzer').unsubjet_map = cms.untracked.InputTag(f"unsubAK{jL}JetMap")
+    getattr(process,f'ak{jL}PFJetAnalyzer').matchTag = f'patJetsAK{R}PFJetsCHS'
     getattr(process,f'ak{jL}PFJetAnalyzer').doHiJetID = doHIJetID
     getattr(process,f'ak{jL}PFJetAnalyzer').doWTARecluster = doWTARecluster
     getattr(process,f'ak{jL}PFJetAnalyzer').jetPtMin = jetPtMin
