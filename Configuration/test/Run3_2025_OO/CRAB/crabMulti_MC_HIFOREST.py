@@ -23,20 +23,20 @@ config.Site.whitelist = ['T1_US_*', 'T1_IT_*', 'T1_FR_*', 'T2_US_*', 'T2_FR_*', 
 
 dataMap = {}
 
-dataMap["DYToEE_M_10_50_POWHEG"] = { "PD": "/DYto2E_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["DYToMuMu_M_10_50_POWHEG"] = { "PD": "/DYto2Mu_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["DYToTauTau_M_10_50_POWHEG"] = { "PD": "/DYto2Tau_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
+dataMap["DYToEE_M_10_50_POWHEG"] = { "PD": "/DYto2E_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["DYToMuMu_M_10_50_POWHEG"] = { "PD": "/DYto2Mu_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["DYToTauTau_M_10_50_POWHEG"] = { "PD": "/DYto2Tau_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
 
-dataMap["DYToEE_M_50_POWHEG"] = { "PD": "/DYto2E_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["DYToMuMu_M_50_POWHEG"] = { "PD": "/DYto2Mu_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["DYToTauTau_M_50_POWHEG"] = { "PD": "/DYto2Tau_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
+dataMap["DYToEE_M_50_POWHEG"] = { "PD": "/DYto2E_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["DYToMuMu_M_50_POWHEG"] = { "PD": "/DYto2Mu_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["DYToTauTau_M_50_POWHEG"] = { "PD": "/DYto2Tau_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
 
-dataMap["WmToENu_POWHEG"] = { "PD": "/WminusToEminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["WpToENu_POWHEG"] = { "PD": "/WplusToEplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["WmToMuNu_POWHEG"] = { "PD": "/WminusToMuminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["WpToMuNu_POWHEG"] = { "PD": "/WplusToMuplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["WmToTauNu_POWHEG"] = { "PD": "/WminusToTauminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
-dataMap["WpToTauNu_POWHEG"] = { "PD": "/WplusToTauplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 2749 }
+dataMap["WmToENu_POWHEG"] = { "PD": "/WminusToEminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["WpToENu_POWHEG"] = { "PD": "/WplusToEplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["WmToMuNu_POWHEG"] = { "PD": "/WminusToMuminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["WpToMuNu_POWHEG"] = { "PD": "/WplusToMuplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["WmToTauNu_POWHEG"] = { "PD": "/WminusToTauminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
+dataMap["WpToTauNu_POWHEG"] = { "PD": "/WplusToTauplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINOOSpring25MiniAOD-150X_mcRun3_2025_forOO_realistic_v9-v1/MINIAODSIM", "Units": 10, "Memory": 3000,   "RunTime": 180 }
 
 ## Submit PDs
 for key, val in dataMap.items():
