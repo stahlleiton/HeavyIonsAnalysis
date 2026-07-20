@@ -1386,7 +1386,8 @@ void ggHiNtuplizer::fillElectrons(const edm::Event& e, const edm::EventSetup& es
     eleRawHoverE_.push_back(ele->full5x5_hcalOverEcal());
     eleRawHoverEBc_.push_back(ele->full5x5_hcalOverEcalBc());
     eleEoverP_.push_back(ele->eSuperClusterOverP());
-    eleEoverPInv_.push_back(1. / ele->ecalEnergy() - 1. / ele->trackMomentumAtVtx().R());
+    auto eOverP = ele->trackMomentumAtVtx().R() > 0. ? (ele->ecalEnergy() / ele->trackMomentumAtVtx().R()) : ele->eSuperClusterOverP();
+    eleEoverPInv_.push_back((1. - eOverP) / ele->ecalEnergy());
     eleEcalE_.push_back(ele->ecalEnergy());
     eleRawEcalE_.push_back(ele->hasUserFloat("rawEcalEnergy") ? ele->userFloat("rawEcalEnergy") : ele->ecalEnergy());
     elePAtVtx_.push_back(ele->trackMomentumAtVtx().R());
