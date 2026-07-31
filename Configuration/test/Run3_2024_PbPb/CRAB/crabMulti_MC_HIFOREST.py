@@ -30,13 +30,14 @@ dataMap["TT_hvq_POWHEG_HERWIG_NONEMB_Official"    ] = { "PD": "/TTbar_TuneCH3_5p
 dataMap["TT_hvq_POWHEG_NONEMB_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-NoPU_141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["TT_hvq_POWHEG_Hydjet_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["TT012J_NLO_FXFX_MADGRAPH_Hydjet_Official"] = { "PD": "/TT-2Jets_TuneCP5_5p36TeV_amcatnloFXFX-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
+'''
 
 dataMap["TWminus_POWHEG_Hydjet_Official"   ] = { "PD": "/singleT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["TWplus_POWHEG_Hydjet_Official"    ] = { "PD": "/singleTbar_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v3/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["SingleT_POWHEG_Hydjet_Official"   ] = { "PD": "/singleT-tchannel_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v3/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["SingleTbar_POWHEG_Hydjet_Official"] = { "PD": "/singleTbar-tchannel_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
-'''
 
+'''
 dataMap["DYToEE_M_50_POWHEG_Hydjet_Official"                  ] = { "PD": "/DYto2E_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["DYToMuMu_M_50_POWHEG_Hydjet_Official"                ] = { "PD": "/DYto2Mu_MLL-50_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 '''
@@ -44,7 +45,9 @@ dataMap["DYToTauTau_M_50_POWHEG_Hydjet_Official"              ] = { "PD": "/DYto
 dataMap["DYToEE_M_10_50_POWHEG_Hydjet_Official"               ] = { "PD": "/DYto2E_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["DYToMuMu_M_10_50_POWHEG_Hydjet_Official"             ] = { "PD": "/DYto2Mu_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["DYToTauTau_M_10_50_POWHEG_Hydjet_Official"           ] = { "PD": "/DYto2Tau_MLL-10to50_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
+'''
 dataMap["DY012JToLL_M_50_NLO_FXFX_MADGRAPH_Hydjet_Official"   ] = { "PD": "/DYto2L-2Jets_MLL-50_TuneCP5_5p36TeV_amcatnloFXFX-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
+'''
 dataMap["DY012JToLL_M_10_50_NLO_FXFX_MADGRAPH_Hydjet_Official"] = { "PD": "/DYto2L-2Jets_MLL-10to50_TuneCP5_5p36TeV_amcatnloFXFX-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 
 dataMap["WpToE_POWHEG_Hydjet_Official"                ] = { "PD": "/WplusToEplusNu_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
@@ -55,10 +58,13 @@ dataMap["WmToMu_POWHEG_Hydjet_Official"               ] = { "PD": "/WminusToMumi
 dataMap["WmToTau_POWHEG_Hydjet_Official"              ] = { "PD": "/WminusToTauminusNu_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["WWto2L2Nu_POWHEG_Hydjet_Official"            ] = { "PD": "/WWto2L2Nu_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["WWtoLNu2Q_POWHEG_Hydjet_Official"            ] = { "PD": "/WWtoLNu2Q_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
+'''
 dataMap["W012JToLNu_NLO_FXFX_MADGRAPH_Hydjet_Official"] = { "PD": "/WtoLNu-2Jets_TuneCP5_5p36TeV_amcatnloFXFX-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
+'''
 dataMap["W01234JToLNu_LO_MLM_MADGRAPH_Hydjet_Official"] = { "PD": "/WtoLNu-4Jets_TuneCP5_5p36TeV_madgraphMLM-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["W01234JToLNu_4J_LO_MLM_MADGRAPH_Hydjet_Official"] = { "PD": "/W-4JetsToLNu-4Jets_TuneCP5_5p36TeV_madgraphMLM-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v1/MINIAODSIM", "Units": 1, "Split": "FileBased", "Memory": 2999, "RunTime": 2749 }
 
+'''
 dataMap["QCDToMu_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Mu_Pthat-20_Fil-Mu_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCDToE_Pthat-20_Fil-E_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 
