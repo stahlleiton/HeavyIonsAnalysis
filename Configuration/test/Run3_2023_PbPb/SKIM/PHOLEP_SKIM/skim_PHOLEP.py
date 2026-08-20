@@ -139,50 +139,12 @@ process.MINIAODoutput = cms.OutputModule("PoolOutputModule",
 
 # Additional output definition
 
-#########################
-# Event Selection -> add the needed filters here
-#########################
-process.load('HeavyIonsAnalysis.EventAnalysis.collisionEventSelection_cff')
-process.goodMuons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("slimmedMuons::@skipCurrentProcess"),
-    cut = cms.string("pt >= 15.0 && passed('CutBasedIdLoose')")
-)
-process.goodElectrons = cms.EDFilter("PATElectronSelector",
-    src = cms.InputTag("slimmedElectrons::SKIM"),
-    cut = cms.string("pt >= 15.0")
-)
-process.goodPhotons = cms.EDFilter("PATPhotonSelector",
-    src = cms.InputTag("slimmedPhotons::SKIM"),
-    cut = cms.string("pt >= 25.0")
-)
-process.oneLepton = cms.EDFilter("PATCountFilter",
-    electronSource = cms.InputTag("goodElectrons"),
-    muonSource     = cms.InputTag("goodMuons"),
-    tauSource      = cms.InputTag(""),
-    photonSource   = cms.untracked.InputTag("goodPhotons"),
-    countElectrons = cms.bool(True),
-    countMuons     = cms.bool(True),
-    countTaus      = cms.bool(False),
-    minNumber = cms.uint32(1),
-    maxNumber = cms.uint32(1000000),
-)
-process.leptonSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.goodPhotons * process.oneLepton)
-process.forest = cms.Path(
-    process.primaryVertexFilter *
-    process.leptonSelection
-)
-
-#########################
-# Apply egamma regression
-#########################
-from HeavyIonsAnalysis.EGMAnalysis.applyEgammaRegression_cfi import applyEgammaRegression
-process = applyEgammaRegression(process, era = "Run3_2023_PbPb")
-cols = ["slimmedElectrons","slimmedPhotons"]
-
 ###########################################################################
 # Add secondary vertex
 ###########################################################################
 process.vertexSeq = cms.Sequence()
+process.forest = cms.Path()
+cols = []
 def _addSecondaryVertex(process,n=''):
     process.load('TrackingTools.TransientTrack.TransientTrackBuilder_cfi')
     import RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff as _sv
@@ -219,6 +181,35 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '132X_dataRun3_Prompt_v7', '')
 
 # Path and EndPath definitions
 process.MINIAODoutput_step = cms.EndPath(process.MINIAODoutput)
+
+process.goodMuons = cms.EDFilter("PATMuonSelector",
+    src = cms.InputTag("slimmedMuons::@skipCurrentProcess"),
+    cut = cms.string("pt >= 15.0 && passed('CutBasedIdLoose')")
+)
+process.goodElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("slimmedElectrons::@skipCurrentProcess"),
+    cut = cms.string("pt >= 15.0")
+)
+process.goodPhotons = cms.EDFilter("PATPhotonSelector",
+    src = cms.InputTag("slimmedPhotons::@skipCurrentProcess"),
+    cut = cms.string("pt >= 25.0")
+)
+process.oneLepton = cms.EDFilter("PATCountFilter",
+    electronSource = cms.InputTag("goodElectrons"),
+    muonSource     = cms.InputTag("goodMuons"),
+    tauSource      = cms.InputTag(""),
+    photonSource   = cms.untracked.InputTag("goodPhotons"),
+    countElectrons = cms.bool(True),
+    countMuons     = cms.bool(True),
+    countTaus      = cms.bool(False),
+    minNumber = cms.uint32(1),
+    maxNumber = cms.uint32(1000000),
+)
+process.leptonSelection = cms.Sequence(process.goodElectrons * process.goodMuons * process.goodPhotons * process.oneLepton)
+process.filterSequence = cms.Sequence(
+    process.leptonSelection
+)
+process.forest.insert(0,process.filterSequence)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.forest,process.MINIAODoutput_step)
