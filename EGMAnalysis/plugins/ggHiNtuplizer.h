@@ -209,6 +209,7 @@ private:
   std::vector<float> eleEta_;
   std::vector<float> elePhi_;
   std::vector<int> eleCharge_;
+  std::vector<int> eleTightCharge_;
   std::vector<float> eleEn_;
 
   std::vector<float> eleSCEn_;

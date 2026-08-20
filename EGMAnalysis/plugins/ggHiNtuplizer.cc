@@ -181,6 +181,7 @@ ggHiNtuplizer::ggHiNtuplizer(const edm::ParameterSet& ps)
     tree_->Branch("eleEta", &eleEta_);
     tree_->Branch("elePhi", &elePhi_);
     tree_->Branch("eleCharge", &eleCharge_);
+    tree_->Branch("eleTightCharge", &eleTightCharge_);
     tree_->Branch("eleEn", &eleEn_);
 
     tree_->Branch("eleMVAIso", &eleMVAIso_);
@@ -647,6 +648,7 @@ void ggHiNtuplizer::analyze(const edm::Event& e, const edm::EventSetup& es) {
     eleEta_.clear();
     elePhi_.clear();
     eleCharge_.clear();
+    eleTightCharge_.clear();
     eleEn_.clear();
 
     eleMVAIso_.clear();
@@ -1358,6 +1360,7 @@ void ggHiNtuplizer::fillElectrons(const edm::Event& e, const edm::EventSetup& es
     eleEta_.push_back(ele->eta());
     elePhi_.push_back(ele->phi());
     eleCharge_.push_back(ele->charge());
+    eleTightCharge_.push_back(ele->isGsfCtfScPixChargeConsistent() + ele->isGsfScPixChargeConsistent());
     eleEn_.push_back(ele->energy());
 
     eleMVAIso_.push_back(ele->hasUserFloat("hiMVAIso") ? ele->userFloat("hiMVAIso") : -99);
