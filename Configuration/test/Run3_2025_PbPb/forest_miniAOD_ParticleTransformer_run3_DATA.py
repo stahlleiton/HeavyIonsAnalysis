@@ -53,8 +53,8 @@ process.centralityBin.centralityVariable = cms.string("HFtowers")
 process.GlobalTag.toGet.extend([
     cms.PSet(
         record = cms.string("HeavyIonRcd"),
-        tag = cms.string("CentralityTable_HFtowers200_DataPbPb_periHYDJETshape_run3v140x01_offline_Nominal"),
-        connect = cms.string("sqlite_file:CentralityTable_2025PbPb_Nominal.db"),
+        tag = cms.string("CentralityTable_HFtowers200_DataPbPb2025_periHYDJETshape_run3v1510x01_offline_Nominal"),
+        connect = cms.string("sqlite_file:CentralityTable_HFtowers200_DataPbPb2025_periHYDJETshape_run3v1510x01_offline_Nominal.db"),
         label = cms.untracked.string("HFtowers")
     ),
 ])
