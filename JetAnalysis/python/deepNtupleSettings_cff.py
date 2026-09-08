@@ -318,7 +318,8 @@ def candidateBtaggingMiniAOD(process, isMC = True, jetPtMin = 15, jetR = 0.4, je
 
     #Add alternative UParT models (2023 UParT):
     label = f'ParticleTransformerAK4JetTagsAK{jL}DeepFlavour'
-    for tag in ['pfUnified','pfNegativeUnified']:
+    tags = ['pfUnified'] + (['pfNegativeUnified'] if addNegTag else [])
+    for tag in tags:
         setattr(process,f'{tag}{label}Alt', getattr(process, f'{tag}{label}').clone(
             model_path = f'HeavyIonsAnalysis/Configuration/data/UParTAK{R}_PbPb_2023.onnx')
         )
