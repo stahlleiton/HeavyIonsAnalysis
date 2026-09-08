@@ -17,7 +17,7 @@ process.HiForestInfo.info = cms.vstring("HiForest, miniAOD, 141X, data")
 # input files
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/hidata/HIRun2024B/HIPhysicsRawPrime0/MINIAOD/PromptReco-v2/000/388/710/00000/2603db0b-9307-4b83-88cc-fef1bbb2633f.root'),
+    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/user/anstahll/hintt/Run3_2024_PbPb/MINIAOD/PHOLEP/2026_08_07/HIPhysicsRawPrime/HIPhysicsRawPrime_PHOLEP_HIRun2024_PromptReco_MINIAOD_v2_2026_08_07/260822_014005/0000/miniaod_1.root'),
 )
 
 # number of events to process, set to -1 to process all events
@@ -78,8 +78,8 @@ process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.hiElectrons_cfi')
 process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleid_BDT.ubj"
-process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
-process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_PbPb/eleiso_BDT.ubj"
+process.hiElectrons.file_corr = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/ele_spectra_train_weights.json.gz"
 process.hiElectrons.era = "Run3_2024_PbPb"
 process.ggHiNtuplizer.electronSrc = "hiElectrons"
 process.egammaSequence = cms.Sequence(process.hiElectrons * process.ggHiNtuplizer)
@@ -97,8 +97,8 @@ process.load("HeavyIonsAnalysis.TrackAnalysis.TrackAnalyzers_cff")
 process.load("HeavyIonsAnalysis.MuonAnalysis.unpackedMuons_cfi")
 process.load('HeavyIonsAnalysis.MuonAnalysis.hiMuons_cfi')
 process.hiMuons.muon_minPt = 10
-process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/muiso_BDT.ubj"
-process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_PbPb/muiso_BDT.ubj"
+process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_2024_PbPb/mu_spectra_train_weights.json.gz"
 process.hiMuons.era = "Run3_2024_PbPb"
 process.unpackedMuons.muons = "hiMuons"
 process.muonSequence = cms.Sequence(process.hiMuons * process.unpackedMuons)

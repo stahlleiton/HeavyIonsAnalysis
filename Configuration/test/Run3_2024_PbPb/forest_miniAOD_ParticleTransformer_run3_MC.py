@@ -92,8 +92,8 @@ process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.hiElectrons_cfi')
 process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleid_BDT.ubj"
-process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
-process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_PbPb/eleiso_BDT.ubj"
+process.hiElectrons.file_corr = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/ele_spectra_train_weights.json.gz"
 process.hiElectrons.era = "Run3_2024_PbPb"
 process.ggHiNtuplizer.doGenParticles = cms.bool(True)
 process.ggHiNtuplizer.genParticleSrc = "prunedGenParticles"
@@ -114,8 +114,8 @@ process.load("HeavyIonsAnalysis.TrackAnalysis.TrackAnalyzers_cff")
 process.load("HeavyIonsAnalysis.MuonAnalysis.unpackedMuons_cfi")
 process.load('HeavyIonsAnalysis.MuonAnalysis.hiMuons_cfi')
 process.hiMuons.muon_minPt = 10
-process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/muiso_BDT.ubj"
-process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_PbPb/muiso_BDT.ubj"
+process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_2024_PbPb/mu_spectra_train_weights.json.gz"
 process.hiMuons.era = "Run3_2024_PbPb"
 process.unpackedMuons.muons = "hiMuons"
 process.muonSequence = cms.Sequence(process.hiMuons * process.unpackedMuons)
