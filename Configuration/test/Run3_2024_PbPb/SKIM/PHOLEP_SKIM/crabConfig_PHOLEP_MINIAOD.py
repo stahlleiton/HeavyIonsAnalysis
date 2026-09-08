@@ -9,8 +9,8 @@ config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'skim_PHOLEP.py'
-config.JobType.maxMemoryMB = 6000
-config.JobType.maxJobRuntimeMin = 1440
+config.JobType.maxMemoryMB = 7500
+config.JobType.maxJobRuntimeMin = 2440
 config.JobType.numCores = 8
 config.section_('Data')
 config.Data.outLFNDirBase = '/store/user/anstahll/hintt/Run3_2024_PbPb/MINIAOD/PHOLEP/'+date
