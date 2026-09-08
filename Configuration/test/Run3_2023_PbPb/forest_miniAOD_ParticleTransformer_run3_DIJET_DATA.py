@@ -91,8 +91,8 @@ process.load("HeavyIonsAnalysis.TrackAnalysis.TrackAnalyzers_cff")
 process.load("HeavyIonsAnalysis.MuonAnalysis.unpackedMuons_cfi")
 process.load('HeavyIonsAnalysis.MuonAnalysis.hiMuons_cfi')
 process.hiMuons.muon_minPt = 10
-process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/muiso_BDT.root"
-process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2023_PbPb.json.gz"
+process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_PbPb/muiso_BDT.root"
+process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/MuonAnalysis/data/Run3_2023_PbPb/mu_spectra_train_weights.json.gz"
 process.hiMuons.era = "Run3_2023_PbPb"
 process.unpackedMuons.muons = "hiMuons"
 process.muonSequence = cms.Sequence(process.hiMuons * process.unpackedMuons)
