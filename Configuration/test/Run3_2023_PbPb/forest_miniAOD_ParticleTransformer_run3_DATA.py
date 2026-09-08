@@ -17,7 +17,7 @@ process.HiForestInfo.info = cms.vstring("HiForest, miniAOD, 132X, data")
 # input files
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/hidata/HIRun2023A/HIPhysicsRawPrime0/MINIAOD/PromptReco-v2/000/375/790/00000/56ad580f-b228-4f3c-b8e3-17f9d95c7654.root'),
+    fileNames = cms.untracked.vstring('root://xrootd-cms.infn.it//store/user/anstahll/hintt/Run3_2023_PbPb/MINIAOD/PHOLEP/2026_08_07/HIPhysicsRawPrime/HIPhysicsRawPrime_PHOLEP_HIRun2023_PromptReco_MINIAOD_2026_08_07/260826_093759/0000/miniaod_311.root'),
 )
 
 # number of events to process, set to -1 to process all events
@@ -144,10 +144,10 @@ doHIJetID = True             # Fill jet ID and composition information branches
 doWTARecluster = True        # Add jet phi and eta for WTA axis
 
 # add candidate tagging
-for jetR, doFlow in zip([0.3, 0.3, 0.4], [False, True, True]):
+for jetR, doFlow in zip([0.3], [False]):
     R = str(int(jetR*10))
     from HeavyIonsAnalysis.JetAnalysis.deepNtupleSettings_cff import candidateBtaggingMiniAOD
-    candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR, jetCorrLevels = ['L2Relative', 'L2L3Residual'], doFlow = doFlow, addNegTag = True, era = "Run3_2023_PbPb")
+    candidateBtaggingMiniAOD(process, isMC = False, jetPtMin = jetPtMin, jetR = jetR, jetCorrLevels = ['L2Relative', 'L2L3Residual'], doFlow = doFlow, addNegTag = True, isSkim = True, era = "Run3_2023_PbPb")
 
     # setup jet analyzer
     jL = f"Cs{R}Flow" if doFlow else f"Cs{R}"
@@ -167,6 +167,8 @@ for jetR, doFlow in zip([0.3, 0.3, 0.4], [False, True, True]):
     getattr(process,f'ak{jL}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{jL}DeepFlavour")
     getattr(process,f'ak{jL}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour")
     getattr(process,f'ak{jL}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTagsAlt = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavourAlt")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfNegativeUnifiedParticleTransformerAK4JetTagsAlt = cms.untracked.string(f"pfNegativeUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavourAlt")
     process.forest += getattr(process,f'ak{jL}PFJetAnalyzer')
 
 

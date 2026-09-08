@@ -5,7 +5,7 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2026_06_26'
+date = '2026_08_26'
 config.General.workArea = 'crab_projects/'+date+'/MC'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -24,7 +24,6 @@ config.Site.whitelist = ['T1_US_*', 'T1_IT_*', 'T1_FR_*', 'T1_UK_*', 'T1_ES_*',
                          'T2_US_*', 'T2_FR_*', 'T2_DE_*', 'T2_IT_Legnaro', 'T2_CH_CERN']
 
 dataMap = {}
-'''
 dataMap["TT_hvq_POWHEG_HERWIG_NONEMB_Official"    ] = { "PD": "/TTbar_TuneCH3_5p36TeV_powheg-herwig7/HINPbPbSpring23MiniAOD-NoPU_132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
 dataMap["TT_hvq_POWHEG_NONEMB_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbSpring23MiniAOD-NoPU_132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
 dataMap["TT_hvq_POWHEG_Hydjet_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
@@ -54,16 +53,17 @@ dataMap["WWto2L2Nu_POWHEG_Hydjet_Official"            ] = { "PD": "/WWto2L2Nu_Tu
 dataMap["WWtoLNu2Q_POWHEG_Hydjet_Official"            ] = { "PD": "/WWtoLNu2Q_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
 dataMap["W012JToLNu_NLO_FXFX_MADGRAPH_Hydjet_Official"] = { "PD": "/WtoLNu-2Jets_TuneCP5_5p36TeV_amcatnloFXFX-pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 10, "Memory": 3000,    "RunTime": 2749 }
 dataMap["W01234JToLNu_LO_MLM_MADGRAPH_Hydjet_Official"] = { "PD": "/WtoLNu-4Jets_TuneCP5_5p36TeV_madgraphMLM-pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
-'''
 dataMap["W01234JToLNu_4J_LO_MLM_MADGRAPH_Hydjet"] = { "PD": "/W-4JetstoLNu-4Jets_TuneCP5_5p36TeV_madgraphMLM-pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 1, "Split": "FileBased", "Memory": 3000, "RunTime": 2749 }
 
-'''
 dataMap["QCDToMu_PYTHIA8_Hydjet_Official"] = { "PD": "/QCDtoMuons_Pthat20_TuneCP5_HydjetDrumMB_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
 dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCDtoElectrons_Pthat20_TuneCP5_HydjetDrumMB_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
 
+'''
 dataMap["DiJet_pTHat15_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD_pThat-15to1200_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 20, "Memory": 3000, "RunTime": 2749 }
 dataMap["BJet_pTHat15_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_BEnriched_pThat-15to500_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 20, "Memory": 3000, "RunTime": 2749 } 
 '''
+dataMap["PhoJet_pTHat15_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Photon_pThat-15to9999_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-forCalibration_132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
+dataMap["PhoJet_pTHat30_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Photon_pThat-30to9999_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
 
 ## Submit PDs
 for key, val in dataMap.items():

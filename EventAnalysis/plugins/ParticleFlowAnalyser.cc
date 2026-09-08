@@ -67,15 +67,14 @@ void ParticleFlowAnalyser::beginJob() {
 
   tree_ = fs_->make<TTree>("pftree", "packed candidates");
 
-  tree_->Branch("nPF", &nPF_, "nPF/I");
-
   tree_->Branch("pfId", &pfId_);
   tree_->Branch("pfPt", &pfPt_);
   tree_->Branch("pfEta", &pfEta_);
   tree_->Branch("pfPhi", &pfPhi_);
-  tree_->Branch("pfE", &pfE_);
-  tree_->Branch("pfM", &pfM_);
   if (addInfo_) {
+    tree_->Branch("nPF", &nPF_, "nPF/I");
+    tree_->Branch("pfE", &pfE_);
+    tree_->Branch("pfM", &pfM_);
     tree_->Branch("pfChg", &pfChg_);
     tree_->Branch("pfDxy", &pfDxy_);
     tree_->Branch("pfDz", &pfDz_);

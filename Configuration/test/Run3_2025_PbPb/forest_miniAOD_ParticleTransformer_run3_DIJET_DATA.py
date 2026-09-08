@@ -53,8 +53,8 @@ process.centralityBin.centralityVariable = cms.string("HFtowers")
 process.GlobalTag.toGet.extend([
     cms.PSet(
         record = cms.string("HeavyIonRcd"),
-        tag = cms.string("CentralityTable_HFtowers200_DataPbPb_periHYDJETshape_run3v140x01_offline_Nominal"),
-        connect = cms.string("sqlite_file:CentralityTable_2025PbPb_Nominal.db"),
+        tag = cms.string("CentralityTable_HFtowers200_DataPbPb2025_periHYDJETshape_run3v1510x01_offline_Nominal"),
+        connect = cms.string("sqlite_file:CentralityTable_HFtowers200_DataPbPb2025_periHYDJETshape_run3v1510x01_offline_Nominal.db"),
         label = cms.untracked.string("HFtowers")
     ),
 ])
@@ -85,10 +85,10 @@ process.load('HeavyIonsAnalysis.EventAnalysis.particleFlowAnalyser_cfi')
 # electrons, photons, muons
 process.load('HeavyIonsAnalysis.EGMAnalysis.ggHiNtuplizer_cfi')
 process.load('HeavyIonsAnalysis.EGMAnalysis.hiElectrons_cfi')
-process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleid_BDT.ubj"
-process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
-process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
-process.hiElectrons.era = "Run3_2024_PbPb"
+process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2025_PbPb/eleid_BDT.ubj"
+process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2025_PbPb/eleiso_BDT.ubj"
+process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2025_PbPb.json.gz"
+process.hiElectrons.era = "Run3_2025_PbPb"
 process.ggHiNtuplizer.electronSrc = "hiElectrons"
 process.egammaSequence = cms.Sequence(process.hiElectrons * process.ggHiNtuplizer)
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
@@ -106,8 +106,8 @@ process.load("HeavyIonsAnalysis.MuonAnalysis.unpackedMuons_cfi")
 process.load('HeavyIonsAnalysis.MuonAnalysis.hiMuons_cfi')
 process.hiMuons.muon_minPt = 10
 process.hiMuons.file_isoModel = "HeavyIonsAnalysis/MuonAnalysis/data/muiso_BDT.ubj"
-process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
-process.hiMuons.era = "Run3_2024_PbPb"
+process.hiMuons.file_isoCorr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2025_PbPb.json.gz"
+process.hiMuons.era = "Run3_2025_PbPb"
 process.unpackedMuons.muons = "hiMuons"
 process.muonSequence = cms.Sequence(process.hiMuons * process.unpackedMuons)
 process.load("HeavyIonsAnalysis.MuonAnalysis.muonAnalyzer_cfi")
@@ -181,6 +181,7 @@ for jetR, doFlow in zip([0.3], [False]):
     getattr(process,f'ak{jL}PFJetAnalyzer').pfDeepFlavourJetTags = cms.untracked.string(f"pfDeepFlavourJetTagsAK{jL}DeepFlavour")
     getattr(process,f'ak{jL}PFJetAnalyzer').pfParticleTransformerAK4JetTags = cms.untracked.string(f"pfParticleTransformerAK4JetTagsAK{jL}DeepFlavour")
     getattr(process,f'ak{jL}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTags = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavour")
+    getattr(process,f'ak{jL}PFJetAnalyzer').pfUnifiedParticleTransformerAK4JetTagsAlt = cms.untracked.string(f"pfUnifiedParticleTransformerAK4JetTagsAK{jL}DeepFlavourAlt")
     process.forest += getattr(process,f'ak{jL}PFJetAnalyzer')
 
 

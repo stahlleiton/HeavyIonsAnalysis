@@ -96,7 +96,9 @@ HiInclusiveJetAnalyzer::HiInclusiveJetAnalyzer(const edm::ParameterSet& iConfig)
                                     "pfDeepFlavourJetTags",
                                     "pfParticleTransformerAK4JetTags",
                                     "pfUnifiedParticleTransformerAK4JetTags",
-                                    "pfNegativeUnifiedParticleTransformerAK4JetTags"}) {
+                                    "pfNegativeUnifiedParticleTransformerAK4JetTags",
+                                    "pfUnifiedParticleTransformerAK4JetTagsAlt",
+                                    "pfNegativeUnifiedParticleTransformerAK4JetTagsAlt"}) {
       const auto& tag = iConfig.getUntrackedParameter<string>(label, "");
       if (tag.empty())
         continue;
@@ -113,14 +115,18 @@ HiInclusiveJetAnalyzer::HiInclusiveJetAnalyzer(const edm::ParameterSet& iConfig)
       else if (label == "pfParticleTransformerAK4JetTags")
         for (const auto& cat : {"probb", "probbb", "problepb"})
           jetTaggers_["particleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
-      else if (label == "pfUnifiedParticleTransformerAK4JetTags")
+      else if (label.rfind("pfUnifiedParticleTransformerAK4JetTags", 0) == 0)
         for (const auto& cat :
              {"probb",        "probbb",       "problepb",     "probc",        "probg",        "probu",
               "probd",        "probs",        "probtaup1h0p", "probtaup1h1p", "probtaup1h2p", "probtaup3h0p",
               "probtaup3h1p", "probtaum1h0p", "probtaum1h1p", "probtaum1h2p", "probtaum3h0p", "probtaum3h1p",
-              "probele",      "probmu",       "ptcorr",       "ptnu",         "ptreshigh",    "ptreslow"})
-          jetTaggers_["unifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
-      else if (label == "pfNegativeUnifiedParticleTransformerAK4JetTags")
+              "probele",      "probmu",       "ptcorr",       "ptnu",         "ptreshigh",    "ptreslow"}) {
+          if (label == "pfUnifiedParticleTransformerAK4JetTags")
+            jetTaggers_["unifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
+          else if (label == "pfUnifiedParticleTransformerAK4JetTagsAlt")
+            jetTaggers_["unifiedParticleTransformerAlt"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
+        }
+      else if (label.rfind("pfNegativeUnifiedParticleTransformerAK4JetTags", 0) == 0)
         for (const auto& cat : {"probb",
                                 "probbb",
                                 "problepb",
@@ -138,8 +144,12 @@ HiInclusiveJetAnalyzer::HiInclusiveJetAnalyzer(const edm::ParameterSet& iConfig)
                                 "probtaum1h1p",
                                 "probtaum1h2p",
                                 "probtaum3h0p",
-                                "probtaum3h1p"})
-          jetTaggers_["negUnifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
+                                "probtaum3h1p"}) {
+          if (label == "pfNegativeUnifiedParticleTransformerAK4JetTags")
+            jetTaggers_["negUnifiedParticleTransformer"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
+          else if (label == "pfNegativeUnifiedParticleTransformerAK4JetTagsAlt")
+            jetTaggers_["negUnifiedParticleTransformerAlt"].emplace(cat, consumes<JetTagCollection>(tag + ":" + cat));
+        }
     }
   }
   doSubEvent_ = false;
@@ -305,7 +315,7 @@ void HiInclusiveJetAnalyzer::beginJob() {
     for (const auto& tg : jetTaggers_) {
       auto& discr = jets_discr_[tg.first];
       t->Branch(("discr_" + tg.first).c_str(), discr["b"].data(), ("discr_" + tg.first + "[nref]/F").c_str());
-      if (tg.first == "unifiedParticleTransformer" || tg.first == "negUnifiedParticleTransformer") {
+      if (tg.first.rfind("nifiedParticleTransformer") != std::string::npos) {
         t->Branch(("discr_" + tg.first + "_probtau").c_str(),
                   discr["probtau"].data(),
                   ("discr_" + tg.first + "_probtau[nref]/F").c_str());
@@ -565,10 +575,10 @@ void HiInclusiveJetAnalyzer::analyze(const Event& iEvent, const EventSetup& iSet
         else if (t.first == "deepCSV")
           discr["b"][jets_.nref] = getTag(t.second.at("probb"), jet) + getTag(t.second.at("probbb"), jet);
         else if (t.first == "deepFlavour" || t.first == "particleTransformer" ||
-                 t.first == "unifiedParticleTransformer" || t.first == "negUnifiedParticleTransformer")
+                 t.first.rfind("nifiedParticleTransformer") != std::string::npos)
           discr["b"][jets_.nref] = getTag(t.second.at("probb"), jet) + getTag(t.second.at("probbb"), jet) +
                                    getTag(t.second.at("problepb"), jet);
-        if (t.first == "unifiedParticleTransformer" || t.first == "negUnifiedParticleTransformer") {
+        if (t.first.rfind("nifiedParticleTransformer") != std::string::npos) {
           float tag(0.0);
           for (const auto& n : {"probtaup1h0p",
                                 "probtaup1h1p",
