@@ -57,10 +57,12 @@ dataMap["W01234JToLNu_4J_LO_MLM_MADGRAPH_Hydjet"] = { "PD": "/W-4JetstoLNu-4Jets
 
 dataMap["QCDToMu_PYTHIA8_Hydjet_Official"] = { "PD": "/QCDtoMuons_Pthat20_TuneCP5_HydjetDrumMB_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
 dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCDtoElectrons_Pthat20_TuneCP5_HydjetDrumMB_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
+#dataMap["QCDToMu_PYTHIA8_Hydjet_Official_v2"] = { "PD": "/QCDToMu_pThat-20_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
+#dataMap["QCDToE_PYTHIA8_Hydjet_Official_v2" ] = { "PD": "/QCDToE_pThat-20_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v1/MINIAODSIM", "Units": 100, "Memory": 3000, "RunTime": 2749 }
 
 '''
 dataMap["DiJet_pTHat15_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD_pThat-15to1200_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 20, "Memory": 3000, "RunTime": 2749 }
-dataMap["BJet_pTHat15_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_BEnriched_pThat-15to500_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 20, "Memory": 3000, "RunTime": 2749 } 
+dataMap["BJet_pTHat15_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCD_BEnriched_pThat-15to500_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v3/MINIAODSIM", "Units": 20, "Memory": 3000, "RunTime": 2749 }
 '''
 dataMap["PhoJet_pTHat15_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Photon_pThat-15to9999_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-forCalibration_132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
 dataMap["PhoJet_pTHat30_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Photon_pThat-30to9999_TuneCP5_5p36TeV_pythia8/HINPbPbSpring23MiniAOD-132X_mcRun3_2023_realistic_HI_v9-v2/MINIAODSIM", "Units": 10, "Memory": 3000, "RunTime": 2749 }
