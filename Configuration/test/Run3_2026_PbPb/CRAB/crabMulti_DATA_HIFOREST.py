@@ -12,7 +12,7 @@ config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_DATA.py'
-config.JobType.inputFiles = ['../phoEleReg_Run3_2025_PbPb.db']
+config.JobType.inputFiles = ['../phoEleReg_Run3_2025_PbPb.db','../CentralityTable_HFtowers200_DataPbPb2026_periHYDJETshape_run3v161x1_offline_Nominal.db']
 config.JobType.maxMemoryMB = 2999
 config.JobType.maxJobRuntimeMin = 1749
 config.section_('Data')

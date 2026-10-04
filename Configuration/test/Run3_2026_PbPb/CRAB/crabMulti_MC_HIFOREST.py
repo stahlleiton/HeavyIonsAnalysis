@@ -12,6 +12,7 @@ config.General.transferLogs = False
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../forest_miniAOD_ParticleTransformer_run3_MC.py'
+config.JobType.inputFiles = ['../phoEleReg_Run3_2025_PbPb.db','../CentralityTable_HFtowers200_HydjetCello_v1510x0_official_MC2025.db']
 config.JobType.numCores = 1
 config.section_('Data')
 config.Data.outLFNDirBase = '/store/group/phys_heavyions/anstahll/hintt/Run3_2025_PbPb/HiForest/'+date+'/MC'
