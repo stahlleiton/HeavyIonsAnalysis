@@ -5,7 +5,7 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2026_06_26'
+date = '2026_08_20'
 config.General.workArea = 'crab_projects/'+date+'/DATA/PHOLEP'
 config.General.transferOutputs = True
 config.General.transferLogs = False

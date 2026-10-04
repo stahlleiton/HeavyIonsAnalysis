@@ -97,8 +97,8 @@ process.correctedElectrons = process.correctedPatElectronProducer.clone(src = "s
 process.correctedElectrons.correctionFile = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2025_pO/ElectronSS_pO2025_DATA.dat"
 process.hiElectrons.electrons = "correctedElectrons"
 process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleid_BDT.ubj"
-process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
-process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_PbPb/eleiso_BDT.ubj"
+process.hiElectrons.file_corr = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/ele_spectra_train_weights.json.gz"
 process.hiElectrons.era = "Run3_2024_PbPb"
 process.ggHiNtuplizer.muonSrc = "slimmedMuons"
 process.ggHiNtuplizer.useValMapIso = False

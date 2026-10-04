@@ -103,8 +103,8 @@ process.correctedElectrons = process.correctedPatElectronProducer.clone(src = "s
 process.correctedElectrons.correctionFile = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2025_pO/ElectronSS_pO2025_MC.dat"
 process.hiElectrons.electrons = "correctedElectrons"
 process.hiElectrons.file_idModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleid_BDT.ubj"
-process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/eleiso_BDT.ubj"
-process.hiElectrons.file_corr = "HeavyIonsAnalysis/Configuration/data/lepton_spectra_train_weights_Run3_2024_PbPb.json.gz"
+process.hiElectrons.file_isoModel = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_PbPb/eleiso_BDT.ubj"
+process.hiElectrons.file_corr = "HeavyIonsAnalysis/EGMAnalysis/data/Run3_2024_PbPb/ele_spectra_train_weights.json.gz"
 process.hiElectrons.era = "Run3_2024_PbPb"
 process.ggHiNtuplizer.doGenParticles = cms.bool(True)
 process.ggHiNtuplizer.genParticleSrc = "prunedGenParticles"
@@ -178,8 +178,7 @@ for jetR in [0.4]:
     getattr(process,f'ak{jL}PFJetAnalyzer').jetName = f'ak{jL}PF'
     getattr(process,f'ak{jL}PFJetAnalyzer').rParam = jetR
     getattr(process,f'ak{jL}PFJetAnalyzer').matchJets = matchJets
-    getattr(process,f'ak{jL}PFJetAnalyzer').matchTag = f'patJetsAK{R}PFUnsubJets'
-    getattr(process,f'ak{jL}PFJetAnalyzer').unsubjet_map = cms.untracked.InputTag(f"unsubAK{jL}JetMap")
+    getattr(process,f'ak{jL}PFJetAnalyzer').matchTag = f'patJetsAK{R}PFJetsCHS'
     getattr(process,f'ak{jL}PFJetAnalyzer').doHiJetID = doHIJetID
     getattr(process,f'ak{jL}PFJetAnalyzer').doWTARecluster = doWTARecluster
     getattr(process,f'ak{jL}PFJetAnalyzer').jetPtMin = jetPtMin
