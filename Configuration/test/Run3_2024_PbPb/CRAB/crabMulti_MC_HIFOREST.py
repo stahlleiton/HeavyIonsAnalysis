@@ -5,7 +5,7 @@ from http.client import HTTPException
 
 config = config()
 config.section_('General')
-date = '2026_06_26'
+date = '2026_08_26'
 config.General.workArea = 'crab_projects/'+date+'/MC'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -25,7 +25,6 @@ config.Site.whitelist = ['T1_US_*', 'T1_IT_*', 'T1_FR_*', 'T1_UK_*', 'T1_ES_*',
 
 dataMap = {}
 
-'''
 dataMap["TT_hvq_POWHEG_HERWIG_NONEMB_Official"    ] = { "PD": "/TTbar_TuneCH3_5p36TeV_powheg-herwig7/HINPbPbWinter24MiniAOD-NoPU_141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["TT_hvq_POWHEG_NONEMB_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-NoPU_141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["TT_hvq_POWHEG_Hydjet_Official"           ] = { "PD": "/TT_TuneCP5_5p36TeV_powheg-pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
@@ -60,6 +59,7 @@ dataMap["W01234JToLNu_4J_LO_MLM_MADGRAPH_Hydjet_Official"] = { "PD": "/W-4JetsTo
 dataMap["QCDToMu_PYTHIA8_Hydjet_Official"] = { "PD": "/QCD-Mu_Pthat-20_Fil-Mu_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 dataMap["QCDToE_PYTHIA8_Hydjet_Official" ] = { "PD": "/QCDToE_Pthat-20_Fil-E_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 10, "Memory": 2999, "RunTime": 2749 }
 
+'''
 dataMap["DiJet_pTHat15_PYTHIA8_Hydjet_Official"] = { "PD": "/Dijet_pThat-15to1200_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 5, "Memory": 2999, "RunTime": 2749, "MaxUnits": 10000 }
 dataMap["BJet_pTHat15_PYTHIA8_Hydjet_Official" ] = { "PD": "/bjet_pThat-15to500_TuneCP5_5p36TeV_pythia8/HINPbPbWinter24MiniAOD-141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM", "Units": 5, "Memory": 2999, "RunTime": 2749, "MaxUnits": 10000 }
 '''

@@ -1,0 +1,27 @@
+from CRABClient.UserUtilities import config
+config = config()
+config.section_('General')
+date = '2026_08_07'
+config.General.workArea = 'crab_projects/RECOVER_'+date
+config.General.requestName = 'HIPhysicsRawPrime_PHOLEP_HIRun2024_PromptReco_MINIAOD_v2_RECOVER_'+date
+config.General.transferOutputs = True
+config.General.transferLogs = False
+config.section_('JobType')
+config.JobType.pluginName = 'Analysis'
+config.JobType.psetName = 'skim_PHOLEP.py'
+config.JobType.maxMemoryMB = 7500
+config.JobType.maxJobRuntimeMin = 2440
+config.JobType.numCores = 8
+config.section_('Data')
+config.Data.outLFNDirBase = '/store/user/anstahll/hintt/Run3_2024_PbPb/MINIAOD/PHOLEP/'+date
+config.Data.publication = True
+config.Data.splitting = 'FileBased'
+config.Data.unitsPerJob = 20
+infile = 'minbias_promptskim_RECOVER_v1.txt'
+config.Data.userInputFiles = open(infile).readlines()
+config.Data.totalUnits = len(config.Data.userInputFiles)
+config.Data.outputPrimaryDataset = 'HIPhysicsRawPrime'
+config.Data.outputDatasetTag = 'HIPhysicsRawPrime_PHOLEP_HIRun2024_PromptReco_MINIAOD_v2_'+date
+config.section_('Site')
+config.Site.storageSite = 'T2_US_Vanderbilt'
+config.Site.whitelist = ['T1_US_*','T1_FR_*','T2_FR_*','T2_DE_*','T2_CH_CERN']
