@@ -21,9 +21,7 @@ EnergyScaleCorrector::EnergyScaleCorrector(std::string const& file,
   read(file);
 }
 
-EnergyScaleCorrector::EnergyScaleCorrector(std::string const& file,
-                                           TRandom* rng,
-                                           float min_pt)
+EnergyScaleCorrector::EnergyScaleCorrector(std::string const& file, TRandom* rng, float min_pt)
     : rng_(rng), min_pt_(min_pt) {
   read(file);
 }
