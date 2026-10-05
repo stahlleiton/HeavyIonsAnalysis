@@ -146,6 +146,7 @@ private:
   std::vector<float> mcVtx_z_;
 
   std::vector<int> mcPID_;
+  std::vector<int> mcFlags_;
   std::vector<int> mcStatus_;
   std::vector<float> mcPt_;
   std::vector<float> mcEta_;
@@ -158,6 +159,7 @@ private:
 
   std::vector<int> mcParentage_;
   std::vector<int> mcMomPID_;
+  std::vector<int> mcMomFlags_;
   std::vector<int> mcMomKey_;
   std::vector<float> mcMomPt_;
   std::vector<float> mcMomEta_;
@@ -286,7 +288,7 @@ private:
 
   std::vector<float> phoE_;
   std::vector<float> phoEt_;
-  std::vector<float> phoRawEt_;
+  std::vector<float> phoRawE_;
   std::vector<float> phoEta_;
   std::vector<float> phoPhi_;
 

@@ -119,6 +119,7 @@ ggHiNtuplizer::ggHiNtuplizer(const edm::ParameterSet& ps)
     tree_->Branch("mcVtx_z", &mcVtx_z_);
 
     tree_->Branch("mcPID", &mcPID_);
+    tree_->Branch("mcFlags", &mcFlags_);
     tree_->Branch("mcStatus", &mcStatus_);
     tree_->Branch("mcPt", &mcPt_);
     tree_->Branch("mcEta", &mcEta_);
@@ -129,6 +130,7 @@ ggHiNtuplizer::ggHiNtuplizer(const edm::ParameterSet& ps)
 
     tree_->Branch("mcParentage", &mcParentage_);
     tree_->Branch("mcMomPID", &mcMomPID_);
+    tree_->Branch("mcMomFlags", &mcMomFlags_);
     tree_->Branch("mcMomKey", &mcMomKey_);
     tree_->Branch("mcMomPt", &mcMomPt_);
     tree_->Branch("mcMomEta", &mcMomEta_);
@@ -268,7 +270,7 @@ ggHiNtuplizer::ggHiNtuplizer(const edm::ParameterSet& ps)
 
     tree_->Branch("phoE", &phoE_);
     tree_->Branch("phoEt", &phoEt_);
-    tree_->Branch("phoRawEt", &phoRawEt_);
+    tree_->Branch("phoRawE", &phoRawE_);
     tree_->Branch("phoEta", &phoEta_);
     tree_->Branch("phoPhi", &phoPhi_);
 
@@ -586,6 +588,7 @@ void ggHiNtuplizer::analyze(const edm::Event& e, const edm::EventSetup& es) {
     mcVtx_z_.clear();
 
     mcPID_.clear();
+    mcFlags_.clear();
     mcStatus_.clear();
     mcPt_.clear();
     mcEta_.clear();
@@ -596,6 +599,7 @@ void ggHiNtuplizer::analyze(const edm::Event& e, const edm::EventSetup& es) {
 
     mcParentage_.clear();
     mcMomPID_.clear();
+    mcMomFlags_.clear();
     mcMomKey_.clear();
     mcMomPt_.clear();
     mcMomEta_.clear();
@@ -732,7 +736,7 @@ void ggHiNtuplizer::analyze(const edm::Event& e, const edm::EventSetup& es) {
 
     phoE_.clear();
     phoEt_.clear();
-    phoRawEt_.clear();
+    phoRawE_.clear();
     phoEta_.clear();
     phoPhi_.clear();
 
@@ -1130,6 +1134,7 @@ void ggHiNtuplizer::fillGenCandidates(const edm::Handle<std::vector<T>>& handle,
     mcVtx_z_.push_back(p->vz());
 
     mcPID_.push_back(p->pdgId());
+    mcFlags_.push_back(p->statusFlags().flags_.to_ulong());
     mcStatus_.push_back(p->status());
     mcPt_.push_back(p->pt());
     mcEta_.push_back(p->eta());
@@ -1145,6 +1150,7 @@ void ggHiNtuplizer::fillGenCandidates(const edm::Handle<std::vector<T>>& handle,
                            (particleHistory.hasExoticParent() << 0));
 
     int momPID = -999;
+    int momFlags = 0;
     int momKey = -1;
     float momPt = -999;
     float momEta = -999;
@@ -1159,6 +1165,7 @@ void ggHiNtuplizer::fillGenCandidates(const edm::Handle<std::vector<T>>& handle,
     const auto& momRef = GenParticleParentage::findGenMother(partRef);
     if (momRef.isNonnull() && momRef.isAvailable()) {
       momPID = momRef->pdgId();
+      momFlags = momRef->statusFlags().flags_.to_ulong();
       momKey = std::abs(momPID) < 1E5 ? (std::abs(momPID) + momRef.key() * 1E5) : -1;
       momPt = momRef->pt();
       momEta = momRef->eta();
@@ -1181,6 +1188,7 @@ void ggHiNtuplizer::fillGenCandidates(const edm::Handle<std::vector<T>>& handle,
     }
 
     mcMomPID_.push_back(momPID);
+    mcMomFlags_.push_back(momFlags);
     mcMomKey_.push_back(momKey);
     mcMomPt_.push_back(momPt);
     mcMomEta_.push_back(momEta);
@@ -1547,7 +1555,7 @@ void ggHiNtuplizer::fillPhotons(const edm::Event& e, const edm::EventSetup& es, 
 
     phoE_.push_back(pho->energy());
     phoEt_.push_back(pho->et());
-    phoRawEt_.push_back(pho->hasUserFloat("rawEt") ? pho->userFloat("rawEt") : pho->et());
+    phoRawE_.push_back(pho->hasUserFloat("rawEnergy") ? pho->userFloat("rawEnergy") : pho->et());
     phoEta_.push_back(pho->eta());
     phoPhi_.push_back(pho->phi());
 
@@ -1940,39 +1948,21 @@ void ggHiNtuplizer::fillPhotons(const edm::Event& e, const edm::EventSetup& es, 
 
     /////////////////////////////// MC matching //////////////////////////
     if (doGenParticles_) {
-      constexpr float delta2 = 0.15 * 0.15;
-
-      bool gpTemp = false;
-      float currentMaxPt = -1;
+      constexpr float delta2(0.0225);
       int matchedIndex = -1;
-
-      for (unsigned igen = 0; igen < mcEt_.size(); ++igen) {
-        if (mcStatus_[igen] != 1 || mcPID_[igen] != 22)
-          continue;
-        if (reco::deltaR2(pho->eta(), pho->phi(), mcEta_[igen], mcPhi_[igen]) < delta2 && mcPt_[igen] > currentMaxPt) {
-          gpTemp = true;
-          currentMaxPt = mcPt_[igen];
-          matchedIndex = igen;
-        }
-      }
-
-      // if no matching photon was found try with other particles
-      std::vector<int> otherPdgIds_ = {1, 11};
-      if (!gpTemp) {
-        currentMaxPt = -1;
+      for (const auto& pdgId : {22, 11, 1}) {
+        float currentMaxPt(1.);
         for (unsigned igen = 0; igen < mcEt_.size(); ++igen) {
-          if (mcStatus_[igen] != 1 ||
-              find(otherPdgIds_.begin(), otherPdgIds_.end(), std::abs(mcPID_[igen])) == otherPdgIds_.end())
+          if (mcStatus_[igen] != 1 || std::abs(mcPID_[igen]) != pdgId)
             continue;
-          if (reco::deltaR2(pho->eta(), pho->phi(), mcEta_[igen], mcPhi_[igen]) < delta2 &&
-              mcPt_[igen] > currentMaxPt) {
-            gpTemp = true;
+          if (reco::deltaR2(pho->eta(), pho->phi(), mcEta_[igen], mcPhi_[igen]) < delta2 && mcPt_[igen] > currentMaxPt) {
             currentMaxPt = mcPt_[igen];
             matchedIndex = igen;
           }
         }
+        if (matchedIndex >= 0)
+          break;
       }
-
       pho_genMatchedIndex_.push_back(matchedIndex);
     }
 
